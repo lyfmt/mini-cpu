@@ -5,7 +5,7 @@
 #
 # 测试目录里要有 imem.hex、dmem.hex；有 expect.trace 时自动在线比对。
 # CPU 轨迹写到 <测试目录>/cpu.trace。其余参数原样传给 vvp，例如 +PIPE、+MAXCYCLES=1000。
-# 例：sim/run_one.sh build/pad/base9/basic/add +PIPE
+# 例：sim/run_one.sh build/nopad/base9/hazard/raw_dist1 +PIPE
 # 退出码：PASS 为 0，否则为 1。
 set -euo pipefail
 

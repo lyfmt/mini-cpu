@@ -1,7 +1,7 @@
 @echo off
 rem Open one test in the ModelSim GUI with the basic wave layout.
 rem Usage: sim\modelsim\run_one.bat <test-dir> [plusarg ...]
-rem   e.g. sim\modelsim\run_one.bat build/pad/base9/basic/add +PIPE
+rem   e.g. sim\modelsim\run_one.bat build/pad/base9/isa/add +PIPE
 setlocal
 cd /d "%~dp0..\.."
 if "%~1"=="" (echo usage: run_one.bat ^<test-dir^> [plusarg ...] & exit /b 2)

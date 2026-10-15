@@ -1,6 +1,8 @@
 # Basic wave layout, grouped by pipeline stage (loaded by run_one.do in the GUI).
 #   - IF .. WB : PC, instruction and valid bit of every stage (a bubble has valid = 0)
-#   - Hazard   : BusAFw, BusBFw, DiSrc, stall, flush, M-stage redirect
+#   - Hazard   : BusAFw/BusBFw with the forwarded operands, DiSrc with the store data
+#                before (m_busB) and after (m_DataIn) correction, stall, flush and
+#                the jump target (flush = M-stage redirect)
 #   - RegFile write / DMem write / IO : where results land
 # All paths are hierarchical names inside tb_top; see rtl/README.md.
 
@@ -29,13 +31,16 @@ add wave -noupdate -expand -group WB -radix hexadecimal -label pc    $C/wb_pc
 add wave -noupdate -expand -group WB -radix hexadecimal -label inst  $C/wb_inst
 add wave -noupdate -expand -group WB                    -label valid $C/wb_valid
 
-add wave -noupdate -expand -group Hazard -radix binary      -label BusAFw   $C/ex_BusAFw
-add wave -noupdate -expand -group Hazard -radix binary      -label BusBFw   $C/ex_BusBFw
-add wave -noupdate -expand -group Hazard                    -label DiSrc    $C/m_DiSrc
-add wave -noupdate -expand -group Hazard                    -label stall    $C/stall
-add wave -noupdate -expand -group Hazard                    -label flush    $C/flush
-add wave -noupdate -expand -group Hazard                    -label redirect $C/m_redirect
-add wave -noupdate -expand -group Hazard -radix hexadecimal -label target   $C/m_target
+add wave -noupdate -expand -group Hazard -radix binary      -label BusAFw    $C/ex_BusAFw
+add wave -noupdate -expand -group Hazard -radix hexadecimal -label fwdA      $C/ex_fwdA
+add wave -noupdate -expand -group Hazard -radix binary      -label BusBFw    $C/ex_BusBFw
+add wave -noupdate -expand -group Hazard -radix hexadecimal -label fwdB      $C/ex_fwdB
+add wave -noupdate -expand -group Hazard                    -label DiSrc     $C/m_DiSrc
+add wave -noupdate -expand -group Hazard -radix hexadecimal -label m_busB    $C/m_busB
+add wave -noupdate -expand -group Hazard -radix hexadecimal -label m_DataIn  $C/m_DataIn
+add wave -noupdate -expand -group Hazard                    -label stall     $C/stall
+add wave -noupdate -expand -group Hazard                    -label flush     $C/flush
+add wave -noupdate -expand -group Hazard -radix hexadecimal -label target    $C/m_target
 
 add wave -noupdate -expand -group {RegFile write}                    -label we $C/u_rf/we
 add wave -noupdate -expand -group {RegFile write} -radix unsigned    -label wa $C/u_rf/wa

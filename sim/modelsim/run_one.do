@@ -3,11 +3,11 @@
 # Run from the repository root:
 #     do sim/modelsim/run_one.do <test-dir> [plusarg ...]
 # e.g.
-#     do sim/modelsim/run_one.do build/pad/base9/basic/add
-#     do sim/modelsim/run_one.do build/pad/base9/basic/add +PIPE
+#     do sim/modelsim/run_one.do build/pad/base9/isa/add
+#     do sim/modelsim/run_one.do build/pad/base9/isa/add +PIPE
 # From a shell (sim/modelsim/run_one.bat does the same):
-#     vsim -do "do sim/modelsim/run_one.do build/pad/base9/basic/add"
-#     vsim -c -do "do sim/modelsim/run_one.do build/pad/base9/basic/add; quit -f"
+#     vsim -do "do sim/modelsim/run_one.do build/pad/base9/isa/add"
+#     vsim -c -do "do sim/modelsim/run_one.do build/pad/base9/isa/add; quit -f"
 #
 # <test-dir> holds imem.hex and dmem.hex; expect.trace is used when present.
 # Up to four extra plusargs (+PIPE, +MAXCYCLES=n, ...) are passed through.

@@ -6,7 +6,7 @@
 //   +IMEM=<path> +DMEM=<path>   必需，程序镜像（$readmemh 格式，各 1024 行）
 //   +EXPECT=<path>              可选，期望轨迹，在线逐条比对
 //   +TRACE=<path>               可选，把 CPU 轨迹写到文件（只有 R、M 行）
-//   +MAXCYCLES=<n>              可选，默认 200000，超时判 FAIL
+//   +MAXCYCLES=<n>              可选，默认 2000000，超时判 FAIL
 //   +PIPE                       可选，每周期打印一行流水线时空图
 //
 // 轨迹采集（每个周期的时钟上升沿、寄存器更新之前采样）：
@@ -47,7 +47,7 @@ module tb_top;
     wire        m_MemWr    = u_cpu.u_core.m_MemWr;
     wire [31:0] m_addr     = u_cpu.u_core.dbus_addr;
     wire [31:0] m_wdata    = u_cpu.u_core.dbus_wdata;
-    wire        m_redirect = u_cpu.u_core.m_redirect;
+    wire [31:0] m_target   = u_cpu.u_core.m_target;
     wire        wb_valid   = u_cpu.u_core.wb_valid;
     wire [31:0] wb_pc      = u_cpu.u_core.wb_pc;
     wire        wb_RegWr   = u_cpu.u_core.wb_RegWr;
@@ -258,13 +258,27 @@ module tb_top;
         end
     endfunction
 
+    // 一行一个周期：五级的 PC（气泡为 --------），当拍的 BusAFw/BusBFw/DiSrc/stall/flush，
+    // 行尾再用标记重复一遍当拍生效的机制，便于肉眼和 grep 查找：
+    //   A<-M / A<-WB、B<-M / B<-WB：转发来源；DiSrc：store 数据用 WB 写回值修正；
+    //   STALL：load-use 停顿；FLUSH->目标：跳转成立，冲刷前三级。
+    // 注意转发选择只按寄存器号判断，不看 EX 段那条指令是否真的读这个操作数
+    // （例如 ori 的 rs2 字段其实是立即数），这种转发不影响结果，照样标出。
     task print_pipe;
         begin
-            $display("PIPE %6d | IF %s | ID %s | EX %s | M %s | WB %s | FwA %b FwB %b DiSrc %b | stall %b flush %b redirect %b",
-                     cyc,
-                     pc_str(1'b1, if_pc), pc_str(id_valid, id_pc), pc_str(ex_valid, ex_pc),
-                     pc_str(m_valid, m_pc), pc_str(wb_valid, wb_pc),
-                     BusAFw, BusBFw, DiSrc, stall, flush, m_redirect);
+            $write("PIPE %6d | IF %s | ID %s | EX %s | M %s | WB %s | FwA %b FwB %b DiSrc %b stall %b flush %b |",
+                   cyc,
+                   pc_str(1'b1, if_pc), pc_str(id_valid, id_pc), pc_str(ex_valid, ex_pc),
+                   pc_str(m_valid, m_pc), pc_str(wb_valid, wb_pc),
+                   BusAFw, BusBFw, DiSrc, stall, flush);
+            if (BusAFw == 2'b10) $write(" A<-M");
+            if (BusAFw == 2'b01) $write(" A<-WB");
+            if (BusBFw == 2'b10) $write(" B<-M");
+            if (BusBFw == 2'b01) $write(" B<-WB");
+            if (DiSrc)           $write(" DiSrc");
+            if (stall)           $write(" STALL");
+            if (flush)           $write(" FLUSH->%h", m_target);
+            $write("\n");
         end
     endtask
 
@@ -280,7 +294,7 @@ module tb_top;
         have_trace    = 1'b0;
 
         if (!$value$plusargs("MAXCYCLES=%d", max_cycles))
-            max_cycles = 200000;
+            max_cycles = 2000000;
         pipe_en = $test$plusargs("PIPE");
 
         if (!$value$plusargs("IMEM=%s", imem_file))

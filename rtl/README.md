@@ -13,8 +13,8 @@
 | `extender.v` | `extender` | 扩展器，ExtOp 选 I/S/B/U/J 五种立即数 |
 | `regfile.v` | `regfile` | 寄存器堆，两读一写，x0 恒 0，同周期写读内部旁路 |
 | `alu.v` | `alu` | ALU：加、减、有符号/无符号比较、或、直通 B；zero 给 beq 用 |
-| `forward_unit.v` | `forward_unit` | 转发单元（BusAFw、BusBFw、DiSrc）。阶段 1 是桩，输出恒为 00/0 |
-| `hazard_unit.v` | `hazard_unit` | 冒险检测（stall、flush）。阶段 1 是桩，输出恒为 0 |
+| `forward_unit.v` | `forward_unit` | 转发单元：EX 段的 BusAFw、BusBFw，M 段的 DiSrc |
+| `hazard_unit.v` | `hazard_unit` | 冒险检测：load-use 停顿（stall）、跳转冲刷（flush） |
 | `imem.v` | `imem` | 指令存储器，4 KB，组合逻辑读出；参数 `INIT_FILE` |
 | `dmem.v` | `dmem` | 数据存储器，4 KB，组合逻辑读出、上升沿写入；参数 `INIT_FILE` |
 | `io_regs.v` | `io_regs` | I/O 寄存器：FINISH、CYCLE、INSTRET、STALLS、FLUSHES、MARK |
@@ -83,7 +83,8 @@ tb_top
 | M | `dbus_addr` `dbus_re` `dbus_we` `dbus_wdata` `dbus_rdata` | 数据总线（存储器 + I/O） |
 | M/WB | `wb_rd` `wb_aluout` `wb_dout` `wb_MemtoReg` `wb_RegWr` | `wb_dout` 是存储器 / I/O 读出值 |
 | WB | `wb_busW` | 最终写回值（MemtoReg 选择之后） |
-| 冒险 | `stall` `flush` | 冒险检测单元输出 |
+| 冒险 | `stall` `flush` | 冒险检测单元输出（`stall` 已排除和冲刷同拍的情况） |
+| 冒险 | `u_hzd/load_use` | 检测到 load-use（未经冲刷屏蔽） |
 
 ### 结果落点
 
@@ -112,14 +113,33 @@ ALUctr 对 R 型运算取 `{inst[30], funct3}`，以后扩展整组运算时译�
 
 - CYCLE：复位释放后的第一个周期读到 0；
 - INSTRET：此前 WB 段有效位为 1 的周期数；
-- STALLS、FLUSHES：此前 `stall`、`flush` 为 1 的周期数。冒险检测单元在阶段 1 恒输出 0，所以这两个计数器恒为 0。
+- STALLS：此前 `stall` 为 1 的周期数，即实际生效的 load-use 停顿。和冲刷同拍、被冲刷覆盖的那一拍不算；
+- FLUSHES：此前 `flush` 为 1 的周期数，即跳转成立的次数（每次冲刷只持续一拍）。
 
-## 阶段 2 要填的地方
+## 冒险处理
 
-结构已经留好，只需往两个桩模块里填逻辑：
+设计文档第五节的每一项在 RTL 里的位置：
 
-- `forward_unit.v`：BusAFw、BusBFw、DiSrc 的判断。转发选择器、DiSrc 选择器，以及"store 数据取转发之后的 busB"都已经接好。
-- `hazard_unit.v`：`stall`（load-use）和 `flush`（等于 `m_redirect`）。PC、各级流水线寄存器对 `stall`/`flush` 的响应（冲刷优先于停顿）已经写在 `cpu_core.v` 里，`io_regs` 也已经按它们计数。
+| 机制 | 位置 | 做法 |
+|---|---|---|
+| EX/M 转发（10） | `forward_unit.v` | M 段指令 RegWr=1、不是 load、rd≠0，且 rd 等于 EX 段的 rs1/rs2 |
+| WB 转发（01） | `forward_unit.v` | WB 段指令 RegWr=1、rd≠0，且 rd 等于 EX 段的 rs1/rs2；送的是 `wb_busW`（MemtoReg 之后） |
+| M 段优先 | `forward_unit.v` | 先判断 M 段，再判断 WB 段 |
+| 转发选择器 | `cpu_core.v` EX 段 | `ex_fwdA`、`ex_fwdB`，ALU 两端、分支比较、store 数据都用它们 |
+| store 数据取转发后的 busB | `cpu_core.v` EX/M | `m_busB <= ex_fwdB`（ALUBSrc 选择器之前） |
+| DiSrc | `forward_unit.v` 判断，`cpu_core.v` M 段选择 | M 段是 store、WB 段写的正是它的 rs2：`m_DataIn = wb_busW` |
+| 寄存器堆同周期旁路 | `regfile.v` | 写读同一寄存器（非 x0）时读端口直接输出写入值 |
+| load-use 停顿 | `hazard_unit.v` | EX 段是 load、rd≠0，且等于 ID 段真正读的源寄存器（UseRs1/UseRs2）；store 的 rs2 不算，store 的 rs1 照样算 |
+| 停顿的执行 | `cpu_core.v` | PC、IF/ID 保持，ID/EX 写入气泡 |
+| 冲刷 | `hazard_unit.v`：`flush = m_redirect`；`cpu_core.v` | PC 换成 `m_target`，IF/ID、ID/EX、EX/M 写入气泡 |
+| 冲刷优先于停顿 | `hazard_unit.v`：`stall = load_use & ~flush`；`cpu_core.v` 各寄存器先判断 flush | 被冲刷的指令不停顿，PC 换成目标；STALLS 也不计这一拍 |
+
+两处行为需要说明：
+
+- 转发选择只按寄存器号判断，不看 EX 段那条指令是否真的读这个操作数。例如 ori 的 rs2 字段其实是立即数，碰巧匹配时 BusBFw 也会非 0。这时转发来的值不会被用到，不影响结果，但时空图和波形里能看到这种转发。
+- "运算后紧跟 store"时，EX/M 转发已经把新值存进了 `m_busB`，到 M 段 DiSrc 也会匹配上，再选一次同样的值。这符合设计文档里 DiSrc 的定义，同样不影响结果。
+
+"M 段的 load 不参与 EX/M 转发"这一条在功能上观察不到：需要 load 结果的指令都会被 load-use 停顿到 load 进入 WB；不停顿的只有 store 数据，而它会在 M 段由 DiSrc 修正。
 
 ## 运行仿真
 
@@ -136,7 +156,7 @@ vvp -n build/sim/cpu.vvp +IMEM=<dir>/imem.hex +DMEM=<dir>/dmem.hex +EXPECT=<dir>
 
 ```
 sim/run_one.sh build/pad/base9/isa/add
-sim/run_one.sh build/pad/base9/isa/add +PIPE +MAXCYCLES=1000
+sim/run_one.sh build/nopad/base9/hazard/load_use +PIPE
 ```
 
 退出码 0 表示 PASS。
@@ -148,13 +168,22 @@ sim/run_one.sh build/pad/base9/isa/add +PIPE +MAXCYCLES=1000
 | `+IMEM=` `+DMEM=` | 必需，程序镜像 |
 | `+EXPECT=` | 可选，期望轨迹；第一处不一致就打印出错周期、PC、期望和实际事件，以 FAIL 结束 |
 | `+TRACE=` | 可选，CPU 轨迹输出文件 |
-| `+MAXCYCLES=` | 可选，默认 200000 |
+| `+MAXCYCLES=` | 可选，默认 2000000 |
 | `+PIPE` | 可选，每周期打印一行时空图 |
 
-时空图每行是一个周期：五级各自的 PC（气泡显示为 `--------`），以及当拍的 BusAFw、BusBFw、DiSrc、stall、flush 和 M 段重定向：
+时空图每行是一个周期：五级各自的 PC（气泡显示为 `--------`），当拍的 BusAFw、BusBFw、DiSrc、stall、flush，行尾再用标记重复一遍当拍生效的机制：`A<-M`/`A<-WB`、`B<-M`/`B<-WB`（转发来源），`DiSrc`，`STALL`，`FLUSH-><目标>`。下面是 load 后紧跟使用（周期 20 停顿，EX 段空一拍，周期 22 从 WB 转发）：
 
 ```
-PIPE      5 | IF 00000014 | ID 00000010 | EX 0000000c | M 00000008 | WB 00000004 | FwA 00 FwB 00 DiSrc 0 | stall 0 flush 0 redirect 0
+PIPE     20 | IF 00000050 | ID 0000004c | EX 00000048 | M 00000044 | WB 00000040 | FwA 00 FwB 00 DiSrc 0 stall 1 flush 0 | STALL
+PIPE     21 | IF 00000050 | ID 0000004c | EX -------- | M 00000048 | WB 00000044 | FwA 00 FwB 00 DiSrc 0 stall 0 flush 0 |
+PIPE     22 | IF 00000054 | ID 00000050 | EX 0000004c | M -------- | WB 00000048 | FwA 01 FwB 00 DiSrc 0 stall 0 flush 0 | A<-WB
+```
+
+跳转成立时（周期 21 的 beq 在 M 段），下一拍前三级都是气泡，IF 是目标：
+
+```
+PIPE     21 | IF 00000054 | ID 00000050 | EX 0000004c | M 00000048 | WB 00000044 | FwA 00 FwB 00 DiSrc 0 stall 0 flush 1 | FLUSH->00000058
+PIPE     22 | IF 00000058 | ID -------- | EX -------- | M -------- | WB 00000048 | FwA 00 FwB 00 DiSrc 0 stall 0 flush 0 |
 ```
 
 最后一行固定是 `RESULT: PASS ...` 或 `RESULT: FAIL <原因> ...`。失败原因：
@@ -179,7 +208,7 @@ PIPE      5 | IF 00000014 | ID 00000010 | EX 0000000c | M 00000008 | WB 00000004
 | `regress.bat` | Windows 入口：`sim\modelsim\regress.bat [pad\|nopad]`，日志在 `build/modelsim/regress_<变体>.log`，全部通过时退出码为 0 |
 | `run_one.do` | 跑单个测试；在 GUI 里自动加载 `wave.do` |
 | `run_one.bat` | Windows 入口：`sim\modelsim\run_one.bat <测试目录> [plusarg ...]`，打开 GUI |
-| `wave.do` | 基本波形布局：各级 PC/指令/有效位、冒险信号、寄存器堆和数据存储器写端口、I/O |
+| `wave.do` | 基本波形布局：各级 PC/指令/有效位；冒险信号（BusAFw/BusBFw 及转发后的操作数、DiSrc 及修正前后的 store 数据、stall、flush、跳转目标）；寄存器堆和数据存储器写端口；I/O |
 
 在 ModelSim 里也可以直接执行：
 
