@@ -38,7 +38,9 @@ TEST_BEGIN
     LI      x5, 0x12
     LI      x6, 0x5
     LI      x7, 0x100
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：第 3、7 组移位紧跟 load 各停 1 拍；中间 6 个 CHECK 各停 1 拍、成立 1 次
+    // PERF 1-2: stalls=8 flushes=6
+    PERF_MARK 1
 
     // 1
     addi    x1, x0, 4
@@ -98,6 +100,6 @@ TEST_BEGIN
     lw      x7, 4(x17)
     PAD_DATA
     srai    x2, x7, 4
-    SEP
+    PERF_MARK 2
     CHECK   x2, 0xf8000000, 7
 TEST_END

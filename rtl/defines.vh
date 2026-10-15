@@ -12,6 +12,7 @@
 `define OP_STORE   7'b0100011
 `define OP_IMM     7'b0010011
 `define OP_REG     7'b0110011
+`define OP_CUSTOM0 7'b0001011   // 定制指令 qmul
 
 // ---------------- ExtOp：立即数格式 ----------------
 `define EXT_I      3'd0
@@ -35,7 +36,8 @@
 
 // ---------------- ALUctr ----------------
 // 编码取 {inst[30], funct3}：R 型运算和移位立即数直接用它，其余立即数运算取 {0, funct3}
-// （它们的 inst[30] 是立即数的一位）。合法指令用不到的组合留给 ALU 自己的运算（直通 B）。
+// （它们的 inst[30] 是立即数的一位）。合法指令用不到的组合留给其他运算：直通 B，
+// 以及选模乘单元输出的 QMUL（它不是 ALU 的运算，由 EX 段的结果选择器使用）。
 `define ALU_ADD    4'b0000
 `define ALU_SLL    4'b0001
 `define ALU_SLT    4'b0010
@@ -45,10 +47,11 @@
 `define ALU_OR     4'b0110
 `define ALU_AND    4'b0111
 `define ALU_SUB    4'b1000
+`define ALU_QMUL   4'b1001   // 结果取模乘单元
 `define ALU_SRA    4'b1101
 `define ALU_PASSB  4'b1111
 
-// ---------------- 分支条件：funct3 ----------------
+// ---------------- 分支条件 BrOp：即条件分支的 funct3 ----------------
 `define BR_EQ      3'b000
 `define BR_NE      3'b001
 `define BR_LT      3'b100

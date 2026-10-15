@@ -34,7 +34,9 @@ TEST_BEGIN
     LI      x26, 0x26
     LI      x27, 12
     LA      x17, buf
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：没有 load-use；第 8 组的 beq 成立 1 次
+    // PERF 1-2: stalls=0 flushes=1
+    PERF_MARK 1
 
     add     x1, x2, x3
     ori     x24, x0, 0x24
@@ -78,7 +80,7 @@ TEST_BEGIN
     PAD_JUMP
     TEST_FAIL 8
 1:
-    SEP
+    PERF_MARK 2
 
     lw      x22, 0(x17)
     lw      x23, 4(x17)

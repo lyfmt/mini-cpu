@@ -43,7 +43,9 @@ TEST_BEGIN
     LI      x3, 0x123
     LI      x4, 0x13579000
     LI      x5, 0x10
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：第 5 组 bne 不成立；中间 6 个 CHECK 各停 1 拍、成立 1 次
+    // PERF 1-2: stalls=6 flushes=6
+    PERF_MARK 1
 
     // 1
     lui     x1, 0xabcde
@@ -136,7 +138,7 @@ TEST_BEGIN
     lui     x0, 0x54321
     PAD_DATA
     add     x2, x0, x0
-    SEP
+    PERF_MARK 2
     CHECK   x2, 0, 11
 
     lw      x10, 0(x17)

@@ -24,7 +24,9 @@ TEST_BEGIN
     LI      x5, 0x5555
     LI      x21, 1
     LA      x17, buf
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：五次跳转成立；读回部分的 beq 不成立
+    // PERF 1-2: stalls=0 flushes=5
+    PERF_MARK 1
 
     jal     x0, 1f
     PAD_JUMP
@@ -54,7 +56,7 @@ TEST_BEGIN
     ori     x8, x0, 8
     sw      x5, 16(x17)
 1:
-    SEP
+    PERF_MARK 2
 
     lw      x10, 0(x17)
     lw      x11, 4(x17)

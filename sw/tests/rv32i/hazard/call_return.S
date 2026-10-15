@@ -30,7 +30,9 @@ TEST_BEGIN
     LI      x21, 0
     LI      x22, 1
     LI      x23, 5
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：调用与返回 10 次（含 f 里调用 g）；中间 4 个 CHECK 各停 1 拍、成立 1 次
+    // PERF 1-2: stalls=4 flushes=14
+    PERF_MARK 1
 
     // 1
     jal     x1, leaf
@@ -65,7 +67,7 @@ TEST_BEGIN
     jal     x5, leaf5
     PAD_JUMP
     add     x21, x21, x23
-    SEP
+    PERF_MARK 2
 
     CHECK   x20, 1, 1
     CHECK   x21, 5, 5

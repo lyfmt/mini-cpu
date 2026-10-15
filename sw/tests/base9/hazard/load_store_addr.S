@@ -31,7 +31,9 @@ TEST_BEGIN
     LA      x17, ptrs
     LA      x18, buf
     LA      x19, decoy
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：三组 load 后紧跟 store 的地址，各停 1 拍
+    // PERF 1-2: stalls=3 flushes=0
+    PERF_MARK 1
 
     lw      x1, 0(x17)
     PAD_DATA
@@ -44,7 +46,7 @@ TEST_BEGIN
     lw      x4, 0(x17)
     PAD_DATA
     sw      x2, 12(x4)
-    SEP
+    PERF_MARK 2
 
     lw      x10, 0(x18)
     lw      x11, 8(x18)

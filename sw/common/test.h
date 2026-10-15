@@ -226,4 +226,14 @@ __test_fail_zero:
     sw      t5, IO_MARK(t6)
 .endm
 
+/* PERF_MARK id：性能场景的起点或终点。前后各一个 SEP，场景之外的停顿、冲刷不会
+ * 算进来，MARK 也不会落在错误路径上。期望增量写在源码的 // PERF 行里
+ * （见 scripts/perf.py）。一段 "PERF_MARK a ; 场景 ; PERF_MARK b" 的 instret
+ * 是场景实际执行的指令数加 9（SEP 3 条 + SEP 3 条 + MARK_POINT 的 3 条）。 */
+.macro PERF_MARK id
+    SEP
+    MARK_POINT \id
+    SEP
+.endm
+
 #endif

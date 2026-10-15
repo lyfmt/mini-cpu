@@ -18,7 +18,9 @@ build/src/<isa>/rand/seed<k>.S，测试 id 是 <isa>/rand/seed<k>；--suite 和 
   2. 拆成 imem.hex / dmem.hex；
   3. 静态检查：代码段里每个字都必须是该测试所属 ISA 子集里的指令；
   4. objdump 生成 prog.dump；
-  5. 参考模型生成 expect.trace（--check-uninit；pad 变体另加 --check-pad）。
+  5. 参考模型生成 expect.trace（--check-uninit；pad 变体另加 --check-pad）；
+  6. 源码里有 // PERF 行时（scripts/perf.py），nopad 变体按第五节规则推算各段计数器
+     增量，与源码里写的值核对，写出 perf.expect。
 
 工具链前缀可用环境变量 RISCV_PREFIX 指定，默认 riscv64-elf-。
 """
@@ -40,6 +42,7 @@ sys.path.insert(0, str(REPO / 'scripts'))
 import iss         # noqa: E402
 import elf2hex     # noqa: E402
 import gen_random  # noqa: E402
+import perf        # noqa: E402
 
 ISA_ORDER = ['base9', 'rv32i', 'rv32i_qmul']
 VARIANTS = ['pad', 'nopad']
@@ -196,6 +199,18 @@ def build_one(test, variant):
     m = re.search(r'^FINISH code=(\d+) instret=(\d+)$', proc.stdout, re.M)
     if not m:
         return fail('reference model printed no FINISH line')
+
+    # 6. PERF 期望
+    expect_file = out / perf.EXPECT_FILE
+    if expect_file.exists():
+        expect_file.unlink()
+    try:
+        directives = perf.parse(test.src.read_text())
+        if directives and variant == 'nopad':
+            marks = perf.estimate(imem, dmem, test.isa)
+            perf.write_expect(expect_file, perf.expectations(directives, marks))
+    except perf.PerfError as e:
+        return fail('PERF: %s' % e)
     return BuildResult(test, variant, True, '\n'.join(log), int(m.group(1)), int(m.group(2)))
 
 

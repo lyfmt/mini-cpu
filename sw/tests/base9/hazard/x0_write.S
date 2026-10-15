@@ -30,7 +30,9 @@ TEST_BEGIN
     LI      x7, 0x77
     LI      x8, 0
     LA      x17, buf
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：目标为 x0 的 load 后面读 x0 不停；第 7 组 beq 成立 1 次
+    // PERF 1-2: stalls=0 flushes=1
+    PERF_MARK 1
 
     ori     x0, x1, 5
     PAD_DATA
@@ -68,7 +70,7 @@ TEST_BEGIN
     ori     x24, x0, 0x24
     ori     x25, x0, 0x25
     add     x7, x0, x0
-    SEP
+    PERF_MARK 2
 
     lw      x10, 0(x17)
     lw      x11, 4(x17)

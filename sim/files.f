@@ -3,6 +3,7 @@ rtl/control.v
 rtl/extender.v
 rtl/alu.v
 rtl/branch_cmp.v
+rtl/qmul_unit.v
 rtl/regfile.v
 rtl/forward_unit.v
 rtl/hazard_unit.v

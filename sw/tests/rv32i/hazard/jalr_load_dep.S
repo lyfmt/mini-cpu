@@ -30,7 +30,9 @@ TEST_BEGIN
     LA      x4, .Lbad3
     LA      x5, .Lbad4
     LI      x3, 0
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：前三组 jalr 紧跟 load 各停 1 拍，第 4 组隔一条不停；四次 jalr
+    // PERF 1-2: stalls=3 flushes=4
+    PERF_MARK 1
 
     lw      x1, 0(x17)
     PAD_DATA
@@ -65,7 +67,7 @@ TEST_BEGIN
     PAD_JUMP
     TEST_FAIL 4
 .Lt4:
-    SEP
+    PERF_MARK 2
 
     CHECK   x3, .Lj2 + 4, 5
     CHECK   x4, .Lj3 + 4, 6

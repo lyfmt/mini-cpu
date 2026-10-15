@@ -10,7 +10,9 @@
 //   - 控制信号沿用课程名字：ex_ALUctr、m_MemWr、wb_RegWr ……
 // 每个流水线寄存器装三类东西：数据、控制信号、身份信息（rd/rs1/rs2、有效位、PC、指令）。
 // 气泡 = 有效位和全部控制信号清零（其余字段也清零，波形更干净）。复位时所有流水线寄存器都是气泡。
-module cpu_core (
+module cpu_core #(
+    parameter HAS_QMUL = 1     // 1：EX 段例化模乘单元，支持 qmul；0：不例化，qmul 按非法指令处理
+) (
     input  wire        clk,
     input  wire        rst,
     // 指令存储器
@@ -49,6 +51,7 @@ module cpu_core (
     reg [1:0]  ex_ALUBSrc;
     reg [3:0]  ex_ALUctr;
     reg        ex_TargetSrc;
+    reg [2:0]  ex_BrOp;
     reg        ex_Branch, ex_Jump, ex_MemRead, ex_MemWr, ex_MemtoReg, ex_RegWr;
 
     // EX/M
@@ -125,10 +128,13 @@ module cpu_core (
     wire [1:0] id_ALUBSrc;
     wire [3:0] id_ALUctr;
     wire       id_TargetSrc;
+    wire [2:0] id_BrOp;
     wire       id_Branch, id_Jump, id_MemRead, id_MemWr, id_MemtoReg, id_RegWr;
     wire       id_UseRs1, id_UseRs2;
 
-    control u_ctrl (
+    control #(
+        .HAS_QMUL (HAS_QMUL)
+    ) u_ctrl (
         .opcode    (id_inst[6:0]),
         .funct3    (id_inst[14:12]),
         .funct7    (id_inst[31:25]),
@@ -137,6 +143,7 @@ module cpu_core (
         .ALUBSrc   (id_ALUBSrc),
         .ALUctr    (id_ALUctr),
         .TargetSrc (id_TargetSrc),
+        .BrOp      (id_BrOp),
         .Branch    (id_Branch),
         .Jump      (id_Jump),
         .MemRead   (id_MemRead),
@@ -200,6 +207,7 @@ module cpu_core (
             ex_ALUBSrc   <= `BSRC_RS2;
             ex_ALUctr    <= `ALU_ADD;
             ex_TargetSrc <= `TSRC_PC;
+            ex_BrOp      <= `BR_EQ;
             ex_Branch    <= 1'b0;
             ex_Jump      <= 1'b0;
             ex_MemRead   <= 1'b0;
@@ -220,6 +228,7 @@ module cpu_core (
             ex_ALUBSrc   <= id_ALUBSrc;
             ex_ALUctr    <= id_ALUctr;
             ex_TargetSrc <= id_TargetSrc;
+            ex_BrOp      <= id_BrOp;
             ex_Branch    <= id_Branch;
             ex_Jump      <= id_Jump;
             ex_MemRead   <= id_MemRead;
@@ -285,15 +294,32 @@ module cpu_core (
         .y      (ex_aluout)
     );
 
-    // 比较单元：和 ALU 并列，用转发之后的操作数，按 funct3 给出条件分支的"条件成立"
-    wire [2:0] ex_funct3 = ex_inst[14:12];
+    // 模乘单元：和 ALU 并排，输入同样是 ALU 两端（qmul 的 ALUASrc 选 rs1、ALUBSrc 选 rs2）
+    wire [31:0] ex_qmul_y;
+
+    generate
+        if (HAS_QMUL != 0) begin : g_qmul
+            qmul_unit u_qmul (
+                .rs1 (ex_alu_a),
+                .rs2 (ex_alu_b),
+                .y   (ex_qmul_y)
+            );
+        end else begin : g_no_qmul
+            assign ex_qmul_y = 32'b0;   // 译码器不会给出 ALU_QMUL，下面的选择器被综合掉
+        end
+    endgenerate
+
+    // 结果选择器：运算结果通路上的值，存进 EX/M（m_aluout），之后的转发、写回都用它
+    wire [31:0] ex_result = (ex_ALUctr == `ALU_QMUL) ? ex_qmul_y : ex_aluout;
+
+    // 比较单元：和 ALU 并列，用转发之后的操作数，按 BrOp 给出条件分支的"条件成立"
     wire       ex_cond;
 
     branch_cmp u_cmp (
-        .a      (ex_fwdA),
-        .b      (ex_fwdB),
-        .funct3 (ex_funct3),
-        .cond   (ex_cond)
+        .a    (ex_fwdA),
+        .b    (ex_fwdB),
+        .BrOp (ex_BrOp),
+        .cond (ex_cond)
     );
 
     // 目标加法器：分支、jal 是 PC + imm；jalr 是转发之后的 rs1 + imm。最低位清零（jalr 的要求，
@@ -327,7 +353,7 @@ module cpu_core (
             m_inst     <= ex_inst;
             m_rd       <= ex_rd;
             m_rs2      <= ex_rs2;
-            m_aluout   <= ex_aluout;
+            m_aluout   <= ex_result;
             m_target   <= ex_target;
             m_cond     <= ex_cond;
             // 存进 EX/M 的 store 数据取转发选择器之后的 busB（ALUBSrc 选择器之前），

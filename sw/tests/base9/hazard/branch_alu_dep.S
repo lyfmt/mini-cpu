@@ -29,7 +29,9 @@ TEST_BEGIN
     LI      x13, 2
     LI      x14, 0x14
     LI      x15, 0x80000000
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：7 个 beq 里 6 个成立（第 3 组不成立）
+    // PERF 1-2: stalls=0 flushes=6
+    PERF_MARK 1
 
     add     x1, x2, x3
     PAD_DATA
@@ -79,7 +81,7 @@ TEST_BEGIN
     PAD_JUMP
     TEST_FAIL 7
 1:
-    SEP
+    PERF_MARK 2
 TEST_END
 
 .Lfail3:

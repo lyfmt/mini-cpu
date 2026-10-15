@@ -5,6 +5,9 @@
 #   - Hazard   : BusAFw/BusBFw with the forwarded operands, DiSrc with the store data
 #                before (m_busB) and after (m_DataIn) correction, stall, flush and
 #                the jump target (flush = M-stage redirect)
+#   - QMUL     : inputs of the modular multiplier (ALU A/B ports), its Barrett
+#                intermediates p, qhat, r, its output and the EX result selected by
+#                ALUctr (only present when HAS_QMUL = 1; onerror resume skips them otherwise)
 #   - RegFile write / DMem write / IO : where results land
 # All paths are hierarchical names inside tb_top; see rtl/README.md.
 
@@ -45,6 +48,15 @@ add wave -noupdate -expand -group Hazard -radix hexadecimal -label m_DataIn  $C/
 add wave -noupdate -expand -group Hazard                    -label stall     $C/stall
 add wave -noupdate -expand -group Hazard                    -label flush     $C/flush
 add wave -noupdate -expand -group Hazard -radix hexadecimal -label target    $C/m_target
+
+add wave -noupdate -group QMUL -radix hexadecimal -label a      $C/ex_alu_a
+add wave -noupdate -group QMUL -radix hexadecimal -label b      $C/ex_alu_b
+add wave -noupdate -group QMUL -radix unsigned    -label p      $C/g_qmul/u_qmul/p
+add wave -noupdate -group QMUL -radix unsigned    -label qhat   $C/g_qmul/u_qmul/qhat
+add wave -noupdate -group QMUL -radix unsigned    -label r      $C/g_qmul/u_qmul/r
+add wave -noupdate -group QMUL -radix unsigned    -label y      $C/ex_qmul_y
+add wave -noupdate -group QMUL -radix binary      -label ALUctr $C/ex_ALUctr
+add wave -noupdate -group QMUL -radix hexadecimal -label result $C/ex_result
 
 add wave -noupdate -expand -group {RegFile write}                    -label we $C/u_rf/we
 add wave -noupdate -expand -group {RegFile write} -radix unsigned    -label wa $C/u_rf/wa

@@ -24,7 +24,9 @@ TEST_BEGIN
     LI      x12, 0
     LI      x20, 0
     LI      x21, 1
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：jal 链 3 次、beq/beq/jal 3 次、jal 和 jal 2 次（中间的 beq 不成立）
+    // PERF 1-2: stalls=0 flushes=8
+    PERF_MARK 1
 
     // jal 链
     jal     x1, .La
@@ -74,7 +76,7 @@ TEST_BEGIN
     MARKERS
 .Lh:
     add     x20, x20, x21
-    SEP
+    PERF_MARK 2
 
     CHECK   x1, .Lr1, 1
     CHECK   x2, .Lr2, 2

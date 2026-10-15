@@ -43,7 +43,9 @@ TEST_BEGIN
     LI      x23, 0
     LI      x24, 0
     LI      x25, 1
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：五次 jalr；错误路径上的 load-use 与冲刷同一拍，不计
+    // PERF 1-2: stalls=0 flushes=5
+    PERF_MARK 1
 
     // 1
     jalr    x0, 0(x17)
@@ -85,7 +87,7 @@ TEST_BEGIN
     PAD_JUMP
 .Lnext:
     add     x24, x24, x25
-    SEP
+    PERF_MARK 2
 
     lw      x10, 0(x18)
     PAD_DATA

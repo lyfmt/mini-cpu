@@ -41,7 +41,9 @@ TEST_BEGIN
     LI      x20, 0
     LI      x21, 1
     LA      x17, d
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：三次跳转成立；错误路径上的 load-use 与冲刷同一拍，不计；目标处和不成立分支后面的 load-use 各停 1 拍
+    // PERF 1-2: stalls=2 flushes=3
+    PERF_MARK 1
 
     beq     x0, x0, .L1
     PAD_JUMP
@@ -79,7 +81,7 @@ TEST_BEGIN
     lw      x13, 0(x17)
     PAD_DATA
     add     x14, x13, x13
-    SEP
+    PERF_MARK 2
 
     CHECK   x1, 0x101, 1
     CHECK   x2, 0x202, 2

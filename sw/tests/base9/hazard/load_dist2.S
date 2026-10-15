@@ -35,7 +35,9 @@ TEST_BEGIN
     LI      x12, 0x12
     LA      x17, d
     LA      x18, out
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：load 都隔一条才用，不停；第 7 组 beq 成立 1 次
+    // PERF 1-2: stalls=0 flushes=1
+    PERF_MARK 1
 
     lw      x1, 0(x17)
     ori     x24, x0, 0x24
@@ -74,7 +76,7 @@ TEST_BEGIN
     PAD_JUMP
     TEST_FAIL 7
 1:
-    SEP
+    PERF_MARK 2
 
     lw      x14, 0(x18)
     lw      x15, 4(x9)

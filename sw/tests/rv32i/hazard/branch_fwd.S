@@ -33,7 +33,9 @@ TEST_BEGIN
     LI      x1, 7
     LI      x2, 1
     PAD_DATA
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：第 3、8 组分支紧跟 load 各停 1 拍；第 2、4、5 组成立
+    // PERF 1-2: stalls=2 flushes=3
+    PERF_MARK 1
 
     // 1：不应跳（x2 此时是 1，先改成 5）
     LI      x2, 5
@@ -130,7 +132,7 @@ TEST_BEGIN
     PAD_DATA
     blt     x15, x14, .Lbad9
     PAD_JUMP
-    SEP
+    PERF_MARK 2
 TEST_END
 
 .Lbad1:

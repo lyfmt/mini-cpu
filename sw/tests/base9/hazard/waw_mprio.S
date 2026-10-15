@@ -30,7 +30,9 @@ TEST_BEGIN
     LI      x14, 0x14
     LI      x15, 2
     LA      x17, buf
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：第 5 组 lw x11 ; add x12, x11 停 1 拍（第 4 组 ori 不读 x9）；第 7 组 beq 成立 1 次
+    // PERF 1-2: stalls=1 flushes=1
+    PERF_MARK 1
 
     add     x1, x2, x3
     ori     x1, x0, 0x77
@@ -70,7 +72,7 @@ TEST_BEGIN
     PAD_JUMP
     TEST_FAIL 7
 1:
-    SEP
+    PERF_MARK 2
 
     lw      x16, 4(x17)
     CHECK   x4, 0x77, 1

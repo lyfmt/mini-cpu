@@ -32,7 +32,9 @@ TEST_BEGIN
     LI      x20, 0
     LI      x21, 1
     LA      x17, buf
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：beq、jal、跳到下一条的 beq 各 1 次，最后的 beq 不成立
+    // PERF 1-2: stalls=0 flushes=3
+    PERF_MARK 1
 
     // beq 成立
     beq     x0, x0, .La
@@ -66,7 +68,7 @@ TEST_BEGIN
     ori     x6, x0, 0x700
     ori     x7, x0, 0x0f0
     ori     x8, x0, 0x00f
-    SEP
+    PERF_MARK 2
 
     lw      x10, 0(x17)
     CHECK   x1, 0, 1

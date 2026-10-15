@@ -5,7 +5,8 @@
 // 测试平台通过层次化路径观察内部信号，对外只引出 FINISH / MARK 写入，使综合时整条数据通路都有负载。
 module cpu_top #(
     parameter IMEM_INIT = "",
-    parameter DMEM_INIT = ""
+    parameter DMEM_INIT = "",
+    parameter HAS_QMUL  = 1    // 1：带模乘单元（rv32i_qmul）；0：去掉模乘单元，qmul 按非法指令处理
 ) (
     input  wire        clk,
     input  wire        rst,        // 同步复位，高有效
@@ -23,7 +24,9 @@ module cpu_top #(
     wire [31:0] dbus_wdata, dbus_rdata;
     wire        retire, stall_evt, flush_evt;
 
-    cpu_core u_core (
+    cpu_core #(
+        .HAS_QMUL (HAS_QMUL)
+    ) u_core (
         .clk        (clk),
         .rst        (rst),
         .imem_addr  (imem_addr),

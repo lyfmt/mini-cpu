@@ -30,7 +30,9 @@ TEST_BEGIN
     LA      x11, .Lt5 + 8
     LA      x12, .Lbad5 + 8
     LI      x8, 0
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：五次 jalr，依赖都走转发
+    // PERF 1-2: stalls=0 flushes=5
+    PERF_MARK 1
 
     addi    x1, x2, 16
     PAD_DATA
@@ -76,7 +78,7 @@ TEST_BEGIN
     PAD_JUMP
     TEST_FAIL 5
 .Lt5:
-    SEP
+    PERF_MARK 2
 
     CHECK   x8, .Lj4 + 4, 6
 TEST_END

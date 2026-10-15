@@ -9,10 +9,15 @@
 //   +MAXCYCLES=<n>              可选，默认 2000000，超时判 FAIL
 //   +PIPE                       可选，每周期打印一行流水线时空图
 //
+// 参数 HAS_QMUL（默认 1）原样传给 cpu_top；为 0 时 CPU 不带模乘单元，qmul 按非法指令处理。
+// 在命令行上改：iverilog -Ptb_top.HAS_QMUL=0，ModelSim vsim -gHAS_QMUL=0。
+//
 // 轨迹采集（每个周期的时钟上升沿、寄存器更新之前采样）：
 //   先 WB 段的 R 事件（有效、RegWr=1、rd!=0），再 M 段的 M 事件（有效、MemWr=1），即程序顺序。
 // M 段写 FINISH 的那个周期结束后停止；最后一行固定是 RESULT 行。
-module tb_top;
+module tb_top #(
+    parameter HAS_QMUL = 1
+);
 
     // ------------------------------------------------------------------
     // 时钟、复位、被测设计
@@ -26,7 +31,9 @@ module tb_top;
     wire        mark;
     wire [31:0] io_wdata;
 
-    cpu_top u_cpu (
+    cpu_top #(
+        .HAS_QMUL (HAS_QMUL)
+    ) u_cpu (
         .clk      (clk),
         .rst      (rst),
         .finish   (finish),

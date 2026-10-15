@@ -25,7 +25,9 @@ TEST_BEGIN
     LI      x5, 0x555
     LA      x17, src
     LA      x18, dst
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：load 后紧跟 store 的数据，不停
+    // PERF 1-2: stalls=0 flushes=0
+    PERF_MARK 1
 
     lw      x1, 0(x17)
     PAD_DATA
@@ -44,7 +46,7 @@ TEST_BEGIN
     PAD_DATA
     sw      x5, 16(x18)
     lw      x6, 16(x18)
-    SEP
+    PERF_MARK 2
 
     lw      x10, 0(x18)
     lw      x11, 4(x18)

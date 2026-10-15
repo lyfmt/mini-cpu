@@ -29,7 +29,9 @@ TEST_BEGIN
     LI      x20, 0
     LI      x21, 1
     LA      x17, d
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：前 4 组 beq 紧跟 load 各停 1 拍，第 5 组隔一条不停；第 1、2、5 组成立
+    // PERF 1-2: stalls=4 flushes=3
+    PERF_MARK 1
 
     lw      x1, 0(x17)
     PAD_DATA
@@ -64,7 +66,7 @@ TEST_BEGIN
     PAD_JUMP
     TEST_FAIL 5
 1:
-    SEP
+    PERF_MARK 2
 
     CHECK   x20, 2, 6
 TEST_END

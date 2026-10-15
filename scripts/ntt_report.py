@@ -205,7 +205,7 @@ def main():
             return 0
 
         print('compiling RTL with iverilog ...', flush=True)
-        error = run_tests.compile_rtl()
+        _, error = run_tests.compile_rtl()
         if error:
             raise ReportError(error)
         cpu = {}

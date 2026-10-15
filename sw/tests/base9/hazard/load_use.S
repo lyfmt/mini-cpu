@@ -41,7 +41,9 @@ TEST_BEGIN
     LI      x22, 0
     LI      x23, 1
     LA      x17, d
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：第 1～8 组各停 1 拍，第 7 组是连续两次再多 1 拍；第 9 组 lui 不读寄存器
+    // PERF 1-2: stalls=9 flushes=0
+    PERF_MARK 1
 
     lw      x1, 0(x17)
     PAD_DATA
@@ -88,7 +90,7 @@ TEST_BEGIN
     lw      x1, 4(x17)
     lui     x20, 0x8            // 编码里 inst[19:15] = 1
     add     x22, x22, x23
-    SEP
+    PERF_MARK 2
 
     CHECK   x2, 0xfffffff3, 1
     CHECK   x5, 0x24, 2

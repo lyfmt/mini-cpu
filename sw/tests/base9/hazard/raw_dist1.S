@@ -36,7 +36,9 @@ TEST_BEGIN
     LI      x19, 0x19
     LI      x20, 0x20
     LA      x17, buf
-    SEP
+    // 计数器（nopad，MARK 1-2 之间）：没有 load，也没有跳转
+    // PERF 1-2: stalls=0 flushes=0
+    PERF_MARK 1
 
     add     x1, x2, x3
     PAD_DATA
@@ -75,7 +77,7 @@ TEST_BEGIN
     add     x20, x17, x0
     PAD_DATA
     lw      x21, 8(x20)
-    SEP
+    PERF_MARK 2
 
     lw      x22, 0(x17)
     lw      x23, 4(x17)

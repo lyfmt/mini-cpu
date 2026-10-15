@@ -2,7 +2,9 @@
 """回归驱动（实现约定第 9 节）。
 
     python3 scripts/run_tests.py [--isa ISA] [--variant pad|nopad|both] [--suite S] [-k PAT]
-                                 [-j N] [--iss-only] [--max-cycles N] [--pipe]
+                                 [--random N [--seed S] [--random-all-isas]]
+                                 [-j N] [--iss-only] [--max-cycles N] [--pipe] [-C N]
+                                 [--rtl-root DIR]
 
 依次完成：构建（含参考模型生成期望轨迹）、iverilog 编译一次、逐个用 vvp 运行、
 解析测试平台的 RESULT 行、打印汇总表。有任何失败就以非 0 退出。
@@ -12,16 +14,26 @@
   --suite     只跑这些 suite（isa、hazard、prog……），可重复或用逗号分隔
   -k          只跑 id（isa/suite/name）或名字匹配通配的测试，可重复
   --iss-only  不跑 CPU，只在参考模型上跑：测试必须以 FINISH 0 结束
+  --rtl-root  从 DIR/sim/files.f 编译 RTL（文件路径相对 DIR），默认仓库根；
+              用来跑 RTL 的副本，例如变异测试
 
 每个测试的仿真输出存在它的构建目录里：sim.log（vvp 的全部输出）、
 cpu.trace（CPU 的轨迹）。测试平台报 FAIL 时，脚本再用 compare_trace
-比对一次期望轨迹，给出第一处不一致的上下文。
+比对一次期望轨迹，给出第一处不一致的上下文。nopad 变体的构建目录里有
+perf.expect 时（源码里的 // PERF 行，见 scripts/perf.py），再比对 MARK 行
+给出的计数器增量，不一致也判 FAIL。
+
+iverilog 的输出是 build/sim/ 下本进程独有的临时文件，进程退出时删除，
+几个会话同时跑测试不会互相覆盖。
 """
 
 import argparse
+import atexit
+import os
 import re
 import subprocess
 import sys
+import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -29,10 +41,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import build           # noqa: E402
 import compare_trace   # noqa: E402
+import perf            # noqa: E402
 
 REPO = build.REPO
 FILES_F = 'sim/files.f'
-VVP_OUT = 'build/sim/cpu.vvp'
+VVP_DIR = REPO / 'build' / 'sim'
+
+# compile_rtl 最近一次的输出；run_cpu 不给 vvp 参数时用它
+compiled_vvp = None
 
 RESULT_RE = re.compile(r'^RESULT: (PASS|FAIL)\b(.*?)\s*cycles=(\d+) instret=(\d+) '
                        r'stalls=(\d+) flushes=(\d+)\s*$')
@@ -54,22 +70,40 @@ class Row:
         return '%s/%s' % (self.variant, self.test.id)
 
 
-def compile_rtl():
-    """iverilog 编译一次。返回错误信息或 None。"""
-    if not (REPO / FILES_F).is_file():
-        return '%s not found (RTL not ready?); use --iss-only to run on the reference model only' % FILES_F
-    (REPO / VVP_OUT).parent.mkdir(parents=True, exist_ok=True)
-    cmd = ['iverilog', '-g2001', '-s', 'tb_top', '-o', VVP_OUT, '-f', FILES_F]
-    proc = subprocess.run(cmd, cwd=str(REPO), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+def remove_quietly(path):
+    try:
+        os.unlink(path)
+    except OSError:
+        pass
+
+
+def compile_rtl(rtl_root=None):
+    """iverilog 编译一次，输出到 build/sim/cpu-*.vvp（本进程独有，进程退出时删除）。
+
+    rtl_root：读 rtl_root/sim/files.f，文件路径相对 rtl_root；默认仓库根。
+    返回 (vvp 文件的路径, None)，失败时返回 (None, 错误信息)。"""
+    global compiled_vvp
+    root = Path(rtl_root) if rtl_root else REPO
+    if not (root / FILES_F).is_file():
+        return None, ('%s not found (RTL not ready?); use --iss-only to run on the reference model only'
+                      % (root / FILES_F))
+    VVP_DIR.mkdir(parents=True, exist_ok=True)
+    fd, vvp = tempfile.mkstemp(prefix='cpu-', suffix='.vvp', dir=str(VVP_DIR))
+    os.close(fd)
+    atexit.register(remove_quietly, vvp)
+    cmd = ['iverilog', '-g2001', '-s', 'tb_top', '-o', vvp, '-f', FILES_F]
+    proc = subprocess.run(cmd, cwd=str(root), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                           universal_newlines=True)
     if proc.returncode:
-        return '$ %s\n%s\niverilog failed' % (' '.join(cmd), proc.stdout.rstrip())
-    return None
+        return None, '$ (cd %s) %s\n%s\niverilog failed' % (root, ' '.join(cmd), proc.stdout.rstrip())
+    compiled_vvp = vvp
+    return vvp, None
 
 
-def run_cpu(row, args):
+def run_cpu(row, args, vvp=None):
+    """跑一个测试，结果填进 row。vvp 默认用 compile_rtl 最近一次的输出。"""
     d = row.test.reldir(row.variant)
-    cmd = ['vvp', '-n', VVP_OUT,
+    cmd = ['vvp', '-n', vvp or compiled_vvp,
            '+IMEM=%s/imem.hex' % d, '+DMEM=%s/dmem.hex' % d,
            '+EXPECT=%s/expect.trace' % d, '+TRACE=%s/cpu.trace' % d]
     if args.max_cycles:
@@ -110,6 +144,15 @@ def run_cpu(row, args):
         row.passed = True
         if same is None:
             row.note = 'no cpu.trace to cross-check'
+        expect = out_dir / perf.EXPECT_FILE
+        if row.variant == 'nopad' and expect.exists():
+            count, problems = perf.check(str(expect), proc.stdout)
+            if problems:
+                row.passed = False
+                row.note = 'perf counters differ'
+                row.details = '\n'.join(problems)
+            else:
+                row.note = (row.note + '; ' if row.note else '') + 'perf ok (%d)' % count
         return
     row.note = result.group(2).strip() if not tb_pass else 'testbench PASS but traces differ'
     lines = [l for l in proc.stdout.splitlines() if l.strip()]
@@ -152,6 +195,8 @@ def main():
                         help='pass +PIPE (pipeline diagram in each sim.log)')
     parser.add_argument('-C', '--context', type=int, default=3,
                         help='trace context lines shown on a mismatch (default 3)')
+    parser.add_argument('--rtl-root', metavar='DIR',
+                        help='compile DIR/sim/files.f (paths relative to DIR) instead of the repository RTL')
     args = parser.parse_args()
 
     tests, variants = build.selection(args)
@@ -179,7 +224,7 @@ def main():
                     row.note = 'reference model: FINISH code=%d' % b.finish_code
     else:
         print('compiling RTL with iverilog ...', flush=True)
-        error = compile_rtl()
+        vvp, error = compile_rtl(args.rtl_root)
         if error:
             print('run_tests: %s' % error, file=sys.stderr)
             return 2
@@ -188,7 +233,7 @@ def main():
             row.instret = None
         print('simulating %d test(s) ...' % len(to_run), flush=True)
         with ThreadPoolExecutor(max_workers=max(1, args.jobs)) as pool:
-            list(pool.map(lambda row: run_cpu(row, args), to_run))
+            list(pool.map(lambda row: run_cpu(row, args, vvp), to_run))
 
     failed = print_table([row for row, b in rows])
     return 1 if failed else 0

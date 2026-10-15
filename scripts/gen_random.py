@@ -47,7 +47,8 @@ MAX_FUNCS = 2
 CODE_OFF = SLOT_OFF + MAX_FUNCS * 4   # 代码指针表，只读
 
 # pad 变体的代码字数上限（指令存储器 1024 字，留出余量）
-MAIN_BUDGET = 780
+MAIN_BUDGET = 802       # 含两处 PERF_MARK（2 × PERF_MARK_WORDS）
+PERF_MARK_WORDS = 11     # pad 变体里 PERF_MARK 的字数：SEP 3 + MARK_POINT 5 + SEP 3
 
 R_BASE9 = ('add', 'slt', 'sltu')
 R_RV32I = R_BASE9 + ('sub', 'and', 'or', 'xor', 'sll', 'srl', 'sra')
@@ -638,6 +639,8 @@ class Generator:
         lines = [
             '// 随机测试：%s，种子 %d。由 scripts/gen_random.py 生成，不要手改。' % (self.isa, self.seed),
             '// 不自检，以 FINISH 0 结束；判定标准是轨迹与参考模型一致。',
+            '// MARK 1、2 之间的计数器增量取按第五节规则推算的值（scripts/perf.py）：',
+            '// PERF 1-2: model',
             '#include "test.h"',
         ]
         if self.has_qmul:
@@ -647,13 +650,13 @@ class Generator:
         for i, r in enumerate(WORK):
             lines.append('    lw      x%d, %d(x%d)' % (r, 4 * i, BASE))
         lines += ['    ori     x%d, x0, 0' % CNT, '    ori     x%d, x0, 1' % ONE,
-                  '    ori     x%d, x0, 0' % TMP, '    PAD_DATA', '']
-        self.size = 4 + 1 + len(WORK) + 3 + 2
+                  '    ori     x%d, x0, 0' % TMP, '    PAD_DATA', '    PERF_MARK 1', '']
+        self.size = 4 + 1 + len(WORK) + 3 + 2 + 2 * PERF_MARK_WORDS
         self.recent = list(WORK)
 
         self.block(Ctx(), budget=MAIN_BUDGET)
         lines += self.out
-        lines += ['', '    TEST_PASS', '']
+        lines += ['', '    PERF_MARK 2', '    TEST_PASS', '']
         lines += self.function_text
 
         lines += ['', '    .data', '    .balign 4', 'rand_data:']
