@@ -1,0 +1,73 @@
+
+/home/lyfmt/Projects/mini-cpu/build/nopad/base9/demo/storedata/prog.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:	00011137          	lui	x2,0x11
+   4:	10006093          	ori	x1,x0,256
+   8:	20006113          	ori	x2,x0,512
+   c:	55506293          	ori	x5,x0,1365
+  10:	66606313          	ori	x6,x0,1638
+  14:	00010237          	lui	x4,0x10
+  18:	00022203          	lw	x4,0(x4) # 10000 <__test_fail_zero+0xff30>
+  1c:	00000033          	add	x0,x0,x0
+  20:	00000033          	add	x0,x0,x0
+  24:	00000033          	add	x0,x0,x0
+  28:	00106f13          	ori	x30,x0,1
+  2c:	80000fb7          	lui	x31,0x80000
+  30:	01efaa23          	sw	x30,20(x31) # 80000014 <__stack_top+0x7ffef014>
+  34:	00000033          	add	x0,x0,x0
+  38:	00000033          	add	x0,x0,x0
+  3c:	00000033          	add	x0,x0,x0
+  40:	00022283          	lw	x5,0(x4) # 0 <_start>
+  44:	00522423          	sw	x5,8(x4) # 8 <_start+0x8>
+  48:	00000033          	add	x0,x0,x0
+  4c:	00000033          	add	x0,x0,x0
+  50:	00000033          	add	x0,x0,x0
+  54:	00208333          	add	x6,x1,x2
+  58:	00000033          	add	x0,x0,x0
+  5c:	00622623          	sw	x6,12(x4) # c <_start+0xc>
+  60:	00000033          	add	x0,x0,x0
+  64:	00000033          	add	x0,x0,x0
+  68:	00000033          	add	x0,x0,x0
+  6c:	00206f13          	ori	x30,x0,2
+  70:	80000fb7          	lui	x31,0x80000
+  74:	01efaa23          	sw	x30,20(x31) # 80000014 <__stack_top+0x7ffef014>
+  78:	00000033          	add	x0,x0,x0
+  7c:	00000033          	add	x0,x0,x0
+  80:	00000033          	add	x0,x0,x0
+  84:	00822503          	lw	x10,8(x4) # 8 <_start+0x8>
+  88:	00c22583          	lw	x11,12(x4) # c <_start+0xc>
+  8c:	00010fb7          	lui	x31,0x10
+  90:	004faf03          	lw	x30,4(x31) # 10004 <__test_fail_zero+0xff34>
+  94:	01e50663          	beq	x10,x30,a0 <_start+0xa0>
+  98:	00106f13          	ori	x30,x0,1
+  9c:	0240006f          	jal	x0,c0 <__test_fail>
+  a0:	00010fb7          	lui	x31,0x10
+  a4:	008faf03          	lw	x30,8(x31) # 10008 <__test_fail_zero+0xff38>
+  a8:	01e58663          	beq	x11,x30,b4 <_start+0xb4>
+  ac:	00206f13          	ori	x30,x0,2
+  b0:	0100006f          	jal	x0,c0 <__test_fail>
+  b4:	80000fb7          	lui	x31,0x80000
+  b8:	000fa023          	sw	x0,0(x31) # 80000000 <__stack_top+0x7ffef000>
+  bc:	0000006f          	jal	x0,bc <_start+0xbc>
+
+000000c0 <__test_fail>:
+  c0:	80000fb7          	lui	x31,0x80000
+  c4:	000f0663          	beq	x30,x0,d0 <__test_fail_zero>
+  c8:	01efa023          	sw	x30,0(x31) # 80000000 <__stack_top+0x7ffef000>
+  cc:	0000006f          	jal	x0,cc <__test_fail+0xc>
+
+000000d0 <__test_fail_zero>:
+  d0:	bad00f37          	lui	x30,0xbad00
+  d4:	01efa023          	sw	x30,0(x31)
+  d8:	0000006f          	jal	x0,d8 <__test_fail_zero+0x8>
+
+/home/lyfmt/Projects/mini-cpu/build/nopad/base9/demo/storedata/prog.elf:     file format elf32-littleriscv
+
+Contents of section .rodata:
+ 10000 0c000100 df9b5713 00030000           ......W.....    
+Contents of section .data:
+ 1000c df9b5713 00000000 dddddddd dddddddd  ..W.............

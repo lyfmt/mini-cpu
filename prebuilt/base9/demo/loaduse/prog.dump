@@ -1,0 +1,58 @@
+
+/home/lyfmt/Projects/mini-cpu/build/nopad/base9/demo/loaduse/prog.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:	00011137          	lui	x2,0x11
+   4:	00106093          	ori	x1,x0,1
+   8:	55506293          	ori	x5,x0,1365
+   c:	00010237          	lui	x4,0x10
+  10:	00022203          	lw	x4,0(x4) # 10000 <__test_fail_zero+0xff6c>
+  14:	00000033          	add	x0,x0,x0
+  18:	00000033          	add	x0,x0,x0
+  1c:	00000033          	add	x0,x0,x0
+  20:	00106f13          	ori	x30,x0,1
+  24:	80000fb7          	lui	x31,0x80000
+  28:	01efaa23          	sw	x30,20(x31) # 80000014 <__stack_top+0x7ffef014>
+  2c:	00000033          	add	x0,x0,x0
+  30:	00000033          	add	x0,x0,x0
+  34:	00000033          	add	x0,x0,x0
+  38:	00022283          	lw	x5,0(x4) # 0 <_start>
+  3c:	00128333          	add	x6,x5,x1
+  40:	00000033          	add	x0,x0,x0
+  44:	00000033          	add	x0,x0,x0
+  48:	00000033          	add	x0,x0,x0
+  4c:	00206f13          	ori	x30,x0,2
+  50:	80000fb7          	lui	x31,0x80000
+  54:	01efaa23          	sw	x30,20(x31) # 80000014 <__stack_top+0x7ffef014>
+  58:	00000033          	add	x0,x0,x0
+  5c:	00000033          	add	x0,x0,x0
+  60:	00000033          	add	x0,x0,x0
+  64:	00010fb7          	lui	x31,0x10
+  68:	004faf03          	lw	x30,4(x31) # 10004 <__test_fail_zero+0xff70>
+  6c:	01e30663          	beq	x6,x30,78 <_start+0x78>
+  70:	00106f13          	ori	x30,x0,1
+  74:	0100006f          	jal	x0,84 <__test_fail>
+  78:	80000fb7          	lui	x31,0x80000
+  7c:	000fa023          	sw	x0,0(x31) # 80000000 <__stack_top+0x7ffef000>
+  80:	0000006f          	jal	x0,80 <_start+0x80>
+
+00000084 <__test_fail>:
+  84:	80000fb7          	lui	x31,0x80000
+  88:	000f0663          	beq	x30,x0,94 <__test_fail_zero>
+  8c:	01efa023          	sw	x30,0(x31) # 80000000 <__stack_top+0x7ffef000>
+  90:	0000006f          	jal	x0,90 <__test_fail+0xc>
+
+00000094 <__test_fail_zero>:
+  94:	bad00f37          	lui	x30,0xbad00
+  98:	01efa023          	sw	x30,0(x31)
+  9c:	0000006f          	jal	x0,9c <__test_fail_zero+0x8>
+
+/home/lyfmt/Projects/mini-cpu/build/nopad/base9/demo/loaduse/prog.elf:     file format elf32-littleriscv
+
+Contents of section .rodata:
+ 10000 08000100 79563412                    ....yV4.        
+Contents of section .data:
+ 10008 78563412                             xV4.            

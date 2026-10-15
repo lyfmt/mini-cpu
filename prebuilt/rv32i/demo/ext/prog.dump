@@ -1,0 +1,103 @@
+
+/home/lyfmt/Projects/mini-cpu/build/nopad/rv32i/demo/ext/prog.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:	00011137          	lui	x2,0x11
+   4:	800000b7          	lui	x1,0x80000
+   8:	0100e093          	ori	x1,x1,16
+   c:	00406113          	ori	x2,x0,4
+  10:	ffb06193          	ori	x3,x0,-5
+  14:	00306213          	ori	x4,x0,3
+  18:	00006513          	ori	x10,x0,0
+  1c:	00006593          	ori	x11,x0,0
+  20:	000104b7          	lui	x9,0x10
+  24:	0004a483          	lw	x9,0(x9) # 10000 <__test_fail_zero+0xfeb4>
+  28:	00000033          	add	x0,x0,x0
+  2c:	00000033          	add	x0,x0,x0
+  30:	00000033          	add	x0,x0,x0
+  34:	00106f13          	ori	x30,x0,1
+  38:	80000fb7          	lui	x31,0x80000
+  3c:	01efaa23          	sw	x30,20(x31) # 80000014 <__stack_top+0x7ffef014>
+  40:	00000033          	add	x0,x0,x0
+  44:	00000033          	add	x0,x0,x0
+  48:	00000033          	add	x0,x0,x0
+  4c:	002092b3          	sll	x5,x1,x2
+  50:	0020d333          	srl	x6,x1,x2
+  54:	4020d3b3          	sra	x7,x1,x2
+  58:	41f0d413          	srai	x8,x1,0x1f
+  5c:	00419663          	bne	x3,x4,68 <_start+0x68>
+  60:	06506f13          	ori	x30,x0,101
+  64:	0d80006f          	jal	x0,13c <__test_fail>
+  68:	0041c663          	blt	x3,x4,74 <_start+0x74>
+  6c:	06606f13          	ori	x30,x0,102
+  70:	0cc0006f          	jal	x0,13c <__test_fail>
+  74:	0a41da63          	bge	x3,x4,128 <_start+0x128>
+  78:	00001517          	auipc	x10,0x1
+  7c:	004485e7          	jalr	x11,4(x9)
+  80:	06806f13          	ori	x30,x0,104
+  84:	0b80006f          	jal	x0,13c <__test_fail>
+  88:	00000033          	add	x0,x0,x0
+  8c:	00000033          	add	x0,x0,x0
+  90:	00000033          	add	x0,x0,x0
+  94:	00206f13          	ori	x30,x0,2
+  98:	80000fb7          	lui	x31,0x80000
+  9c:	01efaa23          	sw	x30,20(x31) # 80000014 <__stack_top+0x7ffef014>
+  a0:	00000033          	add	x0,x0,x0
+  a4:	00000033          	add	x0,x0,x0
+  a8:	00000033          	add	x0,x0,x0
+  ac:	00010fb7          	lui	x31,0x10
+  b0:	004faf03          	lw	x30,4(x31) # 10004 <__test_fail_zero+0xfeb8>
+  b4:	01e28663          	beq	x5,x30,c0 <_start+0xc0>
+  b8:	00106f13          	ori	x30,x0,1
+  bc:	0800006f          	jal	x0,13c <__test_fail>
+  c0:	00010fb7          	lui	x31,0x10
+  c4:	008faf03          	lw	x30,8(x31) # 10008 <__test_fail_zero+0xfebc>
+  c8:	01e30663          	beq	x6,x30,d4 <_start+0xd4>
+  cc:	00206f13          	ori	x30,x0,2
+  d0:	06c0006f          	jal	x0,13c <__test_fail>
+  d4:	00010fb7          	lui	x31,0x10
+  d8:	00cfaf03          	lw	x30,12(x31) # 1000c <__test_fail_zero+0xfec0>
+  dc:	01e38663          	beq	x7,x30,e8 <_start+0xe8>
+  e0:	00306f13          	ori	x30,x0,3
+  e4:	0580006f          	jal	x0,13c <__test_fail>
+  e8:	00010fb7          	lui	x31,0x10
+  ec:	010faf03          	lw	x30,16(x31) # 10010 <__test_fail_zero+0xfec4>
+  f0:	01e40663          	beq	x8,x30,fc <_start+0xfc>
+  f4:	00406f13          	ori	x30,x0,4
+  f8:	0440006f          	jal	x0,13c <__test_fail>
+  fc:	00010fb7          	lui	x31,0x10
+ 100:	014faf03          	lw	x30,20(x31) # 10014 <__test_fail_zero+0xfec8>
+ 104:	01e50663          	beq	x10,x30,110 <_start+0x110>
+ 108:	00506f13          	ori	x30,x0,5
+ 10c:	0300006f          	jal	x0,13c <__test_fail>
+ 110:	00010fb7          	lui	x31,0x10
+ 114:	018faf03          	lw	x30,24(x31) # 10018 <__test_fail_zero+0xfecc>
+ 118:	01e58663          	beq	x11,x30,124 <_start+0x124>
+ 11c:	00606f13          	ori	x30,x0,6
+ 120:	01c0006f          	jal	x0,13c <__test_fail>
+ 124:	00c0006f          	jal	x0,130 <_start+0x130>
+ 128:	06706f13          	ori	x30,x0,103
+ 12c:	0100006f          	jal	x0,13c <__test_fail>
+ 130:	80000fb7          	lui	x31,0x80000
+ 134:	000fa023          	sw	x0,0(x31) # 80000000 <__stack_top+0x7ffef000>
+ 138:	0000006f          	jal	x0,138 <_start+0x138>
+
+0000013c <__test_fail>:
+ 13c:	80000fb7          	lui	x31,0x80000
+ 140:	000f0663          	beq	x30,x0,14c <__test_fail_zero>
+ 144:	01efa023          	sw	x30,0(x31) # 80000000 <__stack_top+0x7ffef000>
+ 148:	0000006f          	jal	x0,148 <__test_fail+0xc>
+
+0000014c <__test_fail_zero>:
+ 14c:	bad00f37          	lui	x30,0xbad00
+ 150:	01efa023          	sw	x30,0(x31)
+ 154:	0000006f          	jal	x0,154 <__test_fail_zero+0x8>
+
+/home/lyfmt/Projects/mini-cpu/build/nopad/rv32i/demo/ext/prog.elf:     file format elf32-littleriscv
+
+Contents of section .rodata:
+ 10000 84000000 00010000 01000008 010000f8  ................
+ 10010 ffffffff 78100000 80000000           ....x.......    

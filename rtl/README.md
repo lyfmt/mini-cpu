@@ -295,24 +295,27 @@ PIPE     22 | IF 00000058 | ID -------- | EX -------- | M -------- | WB 00000048
 
 ### ModelSim
 
-脚本在 `sim/modelsim/`，都从仓库根目录运行，路径相对仓库根。编译库放在 `build/modelsim/work`，按路径引用，不写 `modelsim.ini`。
+脚本在 `sim/modelsim/`，都从仓库根目录运行，路径相对仓库根。程序镜像读随仓库提交的 `prebuilt/`（见 README.md）；工作库、波形、轨迹和日志都写到 `build/modelsim/`，脚本自己创建这个目录，不写 `modelsim.ini`。
 
 | 文件 | 用途 |
 |---|---|
 | `compile.do` | `vlog -f sim/files.f` 编译到 `build/modelsim/work` |
-| `regress.do` | 批量回归：读 `build/<变体>/tests.lst`，逐个运行，汇总 PASS/FAIL，清单写到 `build/modelsim/regress_<变体>.txt` |
-| `regress.bat` | Windows 入口：`sim\modelsim\regress.bat [pad\|nopad]`，日志在 `build/modelsim/regress_<变体>.log`，全部通过时退出码为 0 |
-| `run_one.do` | 跑单个测试；在 GUI 里自动加载 `wave.do` |
+| `regress.do` | 批量回归：读 `prebuilt/tests.lst`（或参数给的列表），逐个运行，汇总 PASS/FAIL，清单写到 `build/modelsim/regress.txt` |
+| `regress.bat` | Windows 入口：`sim\modelsim\regress.bat`，日志在 `build/modelsim/regress.log`，全部通过时退出码为 0 |
+| `run_one.do` | 跑单个测试（目录，或 `base9/isa/add` 这样的 id，到 `prebuilt/` 下找）；在 GUI 里自动加载 `wave.do`；轨迹写到 `build/modelsim/run_one.trace` |
 | `run_one.bat` | Windows 入口：`sim\modelsim\run_one.bat <测试目录> [plusarg ...]`，打开 GUI |
 | `wave.do` | 基本波形布局：各级 PC/指令/有效位，EX 段另有分支条件和跳转目标；模乘单元（输入、p/qhat/r、输出、结果选择器的输出）；冒险信号（BusAFw/BusBFw 及转发后的操作数、DiSrc 及修正前后的 store 数据、stall、flush、跳转目标）；寄存器堆和数据存储器写端口；I/O |
+| `demo/<name>.do` | 演示（设计文档第九节演示表）：pipeline、forward、loaduse、storedata、flush、ext、qmul。编译、载入 `prebuilt/<isa>/demo/<name>`（带 `+PIPE`）、加载 `demo/wave_demo.do`、运行到结束，在关键周期放光标并缩放；公共部分在 `demo/start.do` |
+| `run_demo.bat` | Windows 入口：`sim\modelsim\run_demo.bat <name>`，打开 GUI |
 
 在 ModelSim 里也可以直接执行：
 
 ```
-vsim -c -do "do sim/modelsim/regress.do pad"
-vsim -do "do sim/modelsim/run_one.do build/pad/base9/isa/add"
+vsim -c -do "do sim/modelsim/regress.do"
+vsim -do "do sim/modelsim/run_one.do prebuilt/base9/isa/add"
+vsim -do "do sim/modelsim/demo/loaduse.do"
 ```
 
-镜像和期望轨迹要事先在 Linux 上生成到 `build/` 下，ModelSim 这边不需要 Python 和 RISC-V 工具链。回归脚本用 `-onfinish stop` 载入设计，仿真结束后读 `/tb_top/result_status`（1 PASS，2 FAIL）判定结果。
+回归脚本用 `-onfinish stop` 载入设计，仿真结束后读 `/tb_top/result_status`（1 PASS，2 FAIL）判定结果。演示的周期号即 `/tb_top/cyc`（与 `+PIPE` 的行号、CYCLE 计数器一致）：时钟周期 10 ns，第 N 拍从 25+10N ns 到 35+10N ns，光标放在 30+10N ns。
 
 `.do` 和 `.bat` 只用 ASCII 字符：中文 Windows 上 Tcl 按 GBK 读脚本，UTF-8 中文后面紧跟的 `{`、`}`、`$` 可能被吞掉。

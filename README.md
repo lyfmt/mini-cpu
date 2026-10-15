@@ -22,12 +22,15 @@ scripts/
   elf2hex.py          ELF → 两个 1024 行的 $readmemh 镜像
   compare_trace.py    比对期望轨迹和 CPU 轨迹
   run_tests.py        回归驱动：构建、iverilog 编译、逐个仿真、汇总
+  prebuilt.py         重新生成 prebuilt/ 并用 iverilog 从中跑一遍（make prebuilt）
   gen_random.py       随机测试程序生成器
   rand_stats.py       随机测试的指令与冒险组合统计
   perf.py             性能计数器期望（// PERF 行）：解析、按第五节规则推算、与 MARK 行比对
   ntt_report.py 等    NTT 评估报告（见 sw/ntt/README.md）
   test_compare_trace.py、test_perf.py
 rtl/ tb/ sim/       硬件、测试平台、仿真脚本（见 rtl/README.md）
+syn/                Vivado 综合脚本（见 上机指南.md）
+prebuilt/           随仓库提交的生成物：nopad 镜像和期望轨迹，Windows 上的 ModelSim、Vivado 直接用
 build/              生成物（不入库）；随机测试的源码生成在 build/src/
 ```
 
@@ -46,7 +49,9 @@ python3 scripts/build.py --isa base9 --variant both --suite hazard -k 'load_*'
 python3 scripts/build.py --isa rv32i --variant nopad --random 100 --seed 1
 ```
 
-`make images` 除了所选 ISA 及以下各层的手写测试，还带上每一层种子 1～30 的随机测试（见下文"随机测试"），所以 ModelSim 回归不需要 Python 也能跑到随机测试。
+`make images` 除了所选 ISA 及以下各层的手写测试，还带上每一层种子 1～30 的随机测试（见下文"随机测试"）。
+
+Windows 上的 ModelSim 和 Vivado 不读 `build/`，读随仓库提交的 `prebuilt/`：nopad 变体的全部手写测试加每层种子 1～30 的随机测试，每个测试只有 `imem.hex`、`dmem.hex`、`expect.trace`（demo、ntt 另有 `prog.dump`），外加 `prebuilt/tests.lst`。测试源码、随机生成器或参考模型改了以后，在 Linux 上跑 `make prebuilt` 重新生成并提交；它最后用 iverilog 只从 `prebuilt/` 读文件把全部测试跑一遍。
 
 每个测试构建到 `build/<variant>/<isa>/<suite>/<name>/`：
 
@@ -57,7 +62,7 @@ python3 scripts/build.py --isa rv32i --variant nopad --random 100 --seed 1
 | `prog.elf`、`prog.dump` | 调试用；dump 里是反汇编（不用伪指令、寄存器写编号）和数据段内容 |
 | `perf.expect` | 只在 nopad 变体、源码里有 `// PERF` 行时生成：每段两次 MARK 之间计数器增量的期望（见"性能计数器期望"） |
 
-`build/<variant>/tests.lst` 每行一个测试目录（相对仓库根），内容是这一变体最近一次构建所选的测试。ModelSim 回归读的就是它，所以在 Windows 上跑 ModelSim 之前，先在 Linux 上用 `make images`（或带 `ISA=`、`VARIANT=` 的形式）把要跑的测试构建好，连同 `build/` 一起拷过去。
+`build/<variant>/tests.lst` 每行一个测试目录（相对仓库根），内容是这一变体最近一次构建所选的测试。
 
 构建失败时，各步骤的命令行和输出打印在终端上（`-v` 时成功的也打印）。构建时还做这些检查，任何一项不过都算构建失败：
 
@@ -82,9 +87,9 @@ make unit-test      # 参考模型、compare_trace、perf 的单元测试
 make clean          # 删除 build/
 ```
 
-各阶段入口的随机测试种子都从 1 开始，结果可以复现。`make stage*`、`random`、`iss-check` 可以用 `ARGS` 追加 `run_tests.py` 的参数，`JOBS` 指定并行数，例如 `make stage2 ARGS="--suite hazard -C 6"`。`make random` 的 `ISA` 默认 `rv32i_qmul`，`N` 默认 1000，`SEED` 默认 1。stage5 目前只是占位。
+各阶段入口的随机测试种子都从 1 开始，结果可以复现。`make stage*`、`random`、`iss-check` 可以用 `ARGS` 追加 `run_tests.py` 的参数，`JOBS` 指定并行数，例如 `make stage2 ARGS="--suite hazard -C 6"`。`make random` 的 `ISA` 默认 `rv32i_qmul`，`N` 默认 1000，`SEED` 默认 1。`make stage5` 即 `make prebuilt`；ModelSim 演示和 Vivado 综合在 Windows 上进行，见 [上机指南.md](上机指南.md)。
 
-每次运行都会按这次所选的测试重写 `build/<variant>/tests.lst`；要给 ModelSim 准备测试列表，最后跑一次 `make images`。
+每次运行都会按这次所选的测试重写 `build/<variant>/tests.lst`。
 
 ### run_tests.py
 
@@ -98,7 +103,7 @@ python3 scripts/run_tests.py [--isa ISA] [--variant pad|nopad|both] [--suite S] 
 |---|---|
 | `--isa` | ISA 子集，累积选择：`rv32i` 同时包括 base9 的测试。默认 `rv32i_qmul`（全部） |
 | `--variant` | `pad`（默认）、`nopad` 或 `both` |
-| `--suite` | 只跑这些 suite（`isa`、`hazard`、`perf`、`prog`、`ntt`，随机测试是 `rand`），可重复或用逗号分隔 |
+| `--suite` | 只跑这些 suite（`isa`、`hazard`、`perf`、`prog`、`ntt`、`demo`，随机测试是 `rand`），可重复或用逗号分隔 |
 | `-k` | 只跑 id（`isa/suite/name`）或名字匹配通配的测试，可重复 |
 | `--random N` | 另加 N 个随机测试，ISA 取 `--isa` 那一层 |
 | `--seed S` | 随机测试的起始种子，用种子 S..S+N-1，默认 1 |
@@ -259,6 +264,7 @@ TEST_END
 | rv32i_qmul/isa | qmul | qmul 单指令测试：边界操作数、高位非零时只取低 12 位、结果取模 |
 | rv32i_qmul/hazard | qmul_dist1、qmul_dist2、qmul_load_use、qmul_store、qmul_flush | qmul 作生产者或消费者时的转发（距离 1、2）、load-use 停顿、结果被 store、错误路径上的 qmul 被冲刷 |
 | rv32i_qmul/ntt | ntt_qmul | Kyber 正向 NTT，qmul 版；`scripts/ntt_report.py` 比较两个版本的周期数 |
+| base9/demo、rv32i/demo、rv32i_qmul/demo | pipeline、forward、loaduse、storedata；flush、ext；qmul | ModelSim 演示用的短程序（设计文档第九节演示表），每个一对 MARK 和 PERF 期望；波形脚本在 `sim/modelsim/demo/` |
 | \<isa\>/rand | seed\<k\> | 随机测试，见"随机测试"；MARK 1、2 之间的计数器增量按规则推算后检查 |
 
 ## 硬件

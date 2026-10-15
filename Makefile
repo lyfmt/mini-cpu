@@ -9,6 +9,8 @@
 #   make iss-check   全部手写测试（两个变体）加每层 30 个随机测试，只在参考模型上跑
 #   make images      只构建镜像和期望轨迹（给 ModelSim 用）：所选测试加每层 30 个
 #                    固定种子（1..30）的随机测试，写进 build/<变体>/tests.lst
+#   make prebuilt    生成随仓库提交的 prebuilt/（nopad 镜像，ModelSim 和 Vivado 在 Windows 上
+#                    直接用），并用 iverilog 从 prebuilt/ 跑一遍全部测试
 #   make rand-stats  统计随机测试里各类指令和冒险组合的出现次数
 #   make unit-test   参考模型和脚本的单元测试
 #   make clean       删除 build/
@@ -26,7 +28,7 @@ ARGS    ?=
 RUN = $(PYTHON) scripts/run_tests.py -j $(JOBS)
 IMAGE_RANDOM = --random 30 --seed 1 --random-all-isas
 
-.PHONY: help stage1 stage2 stage3 stage4 stage5 random iss-check images rand-stats unit-test clean
+.PHONY: help stage1 stage2 stage3 stage4 stage5 random iss-check images prebuilt rand-stats unit-test clean
 
 help:
 	@sed -n '3,18p' Makefile
@@ -48,9 +50,8 @@ stage4:
 		echo "scripts/ntt_report.py not found, skipping the NTT report"; \
 	fi
 
-# 阶段 5 是 ModelSim 演示和 Vivado 综合，在 Windows 上进行
-stage5:
-	@echo "make stage5: not implemented yet" >&2; exit 1
+# 阶段 5 是 ModelSim 演示和 Vivado 综合，在 Windows 上进行；这里只准备 prebuilt/
+stage5: prebuilt
 
 random:
 	$(RUN) --isa $(ISA) --variant nopad --suite rand --random $(N) --seed $(SEED) $(ARGS)
@@ -60,6 +61,9 @@ iss-check:
 
 images:
 	$(PYTHON) scripts/build.py -j $(JOBS) --isa $(ISA) --variant $(VARIANT) $(IMAGE_RANDOM) $(ARGS)
+
+prebuilt:
+	$(PYTHON) scripts/prebuilt.py -j $(JOBS)
 
 rand-stats:
 	$(PYTHON) scripts/rand_stats.py -j $(JOBS) --isa $(ISA) --count $(N) --seed $(SEED)

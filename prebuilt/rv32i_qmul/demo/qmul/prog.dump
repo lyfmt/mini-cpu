@@ -1,0 +1,63 @@
+
+/home/lyfmt/Projects/mini-cpu/build/nopad/rv32i_qmul/demo/qmul/prog.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:	00011137          	lui	x2,0x11
+   4:	4d206093          	ori	x1,x0,1234
+   8:	00001137          	lui	x2,0x1
+   c:	92906393          	ori	x7,x0,-1751
+  10:	00710133          	add	x2,x2,x7
+  14:	3e806193          	ori	x3,x0,1000
+  18:	55506293          	ori	x5,x0,1365
+  1c:	00000033          	add	x0,x0,x0
+  20:	00000033          	add	x0,x0,x0
+  24:	00000033          	add	x0,x0,x0
+  28:	00106f13          	ori	x30,x0,1
+  2c:	80000fb7          	lui	x31,0x80000
+  30:	01efaa23          	sw	x30,20(x31) # 80000014 <__stack_top+0x7ffef014>
+  34:	00000033          	add	x0,x0,x0
+  38:	00000033          	add	x0,x0,x0
+  3c:	00000033          	add	x0,x0,x0
+  40:	0020828b          	.insn	4, 0x0020828b
+  44:	00328333          	add	x6,x5,x3
+  48:	00000033          	add	x0,x0,x0
+  4c:	00000033          	add	x0,x0,x0
+  50:	00000033          	add	x0,x0,x0
+  54:	00206f13          	ori	x30,x0,2
+  58:	80000fb7          	lui	x31,0x80000
+  5c:	01efaa23          	sw	x30,20(x31) # 80000014 <__stack_top+0x7ffef014>
+  60:	00000033          	add	x0,x0,x0
+  64:	00000033          	add	x0,x0,x0
+  68:	00000033          	add	x0,x0,x0
+  6c:	00010fb7          	lui	x31,0x10
+  70:	000faf03          	lw	x30,0(x31) # 10000 <__test_fail_zero+0xff50>
+  74:	01e28663          	beq	x5,x30,80 <_start+0x80>
+  78:	00106f13          	ori	x30,x0,1
+  7c:	0240006f          	jal	x0,a0 <__test_fail>
+  80:	00010fb7          	lui	x31,0x10
+  84:	004faf03          	lw	x30,4(x31) # 10004 <__test_fail_zero+0xff54>
+  88:	01e30663          	beq	x6,x30,94 <_start+0x94>
+  8c:	00206f13          	ori	x30,x0,2
+  90:	0100006f          	jal	x0,a0 <__test_fail>
+  94:	80000fb7          	lui	x31,0x80000
+  98:	000fa023          	sw	x0,0(x31) # 80000000 <__stack_top+0x7ffef000>
+  9c:	0000006f          	jal	x0,9c <_start+0x9c>
+
+000000a0 <__test_fail>:
+  a0:	80000fb7          	lui	x31,0x80000
+  a4:	000f0663          	beq	x30,x0,b0 <__test_fail_zero>
+  a8:	01efa023          	sw	x30,0(x31) # 80000000 <__stack_top+0x7ffef000>
+  ac:	0000006f          	jal	x0,ac <__test_fail+0xc>
+
+000000b0 <__test_fail_zero>:
+  b0:	bad00f37          	lui	x30,0xbad00
+  b4:	01efa023          	sw	x30,0(x31)
+  b8:	0000006f          	jal	x0,b8 <__test_fail_zero+0x8>
+
+/home/lyfmt/Projects/mini-cpu/build/nopad/rv32i_qmul/demo/qmul/prog.elf:     file format elf32-littleriscv
+
+Contents of section .rodata:
+ 10000 3d030000 25070000                    =...%...        
