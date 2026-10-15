@@ -1,0 +1,13 @@
++incdir+rtl
+rtl/control.v
+rtl/extender.v
+rtl/alu.v
+rtl/regfile.v
+rtl/forward_unit.v
+rtl/hazard_unit.v
+rtl/imem.v
+rtl/dmem.v
+rtl/io_regs.v
+rtl/cpu_core.v
+rtl/cpu_top.v
+tb/tb_top.v

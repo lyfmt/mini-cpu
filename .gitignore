@@ -1,0 +1,12 @@
+# 生成物
+/build/
+
+# Python
+__pycache__/
+*.pyc
+
+# ModelSim / Vivado 在当前目录留下的文件
+transcript
+*.wlf
+.Xil/
+*.jou
