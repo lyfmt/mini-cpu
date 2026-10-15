@@ -8,7 +8,7 @@
  *     TEST_END                        // 全部通过：FINISH 0
  *
  * 这些宏只用 base9 指令（add slt sltu ori lui lw sw beq jal），
- * 所以 base9 和更大的子集都能用。
+ * 所以 base9 和更大的子集都能用（TEST_RR/TEST_RI/TEST_BR 另外用到被测指令本身）。
  *
  * 约定：
  *   - x30（t5）、x31（t6）归宏使用，测试代码不要在里面放要保留的值。
@@ -155,10 +155,60 @@ __test_fail_zero:
 .endm
 
 /* ------------------------------------------------------------------
+ * 单指令测试用例。都用 x5、x6 放操作数，x7 作 LI 的临时寄存器，结果写 x10。
+ * x10 事先装上 0x5a5a5000，被测指令没写 x10 时检查一定失败
+ * （期望值不要取这个数）。
+ *
+ *   TEST_RR op, a, b, expect, code    op x10, x5(=a), x6(=b)
+ *   TEST_RI op, a, imm, expect, code  op x10, x5(=a), imm
+ *   TEST_BR op, a, b, taken, code     op x5(=a), x6(=b), 目标在后面；
+ *                                     taken 为 1 时必须跳，为 0 时必须不跳
+ * ------------------------------------------------------------------ */
+.macro TEST_RR op, a, b, expect, code
+    lui     x10, 0x5a5a5
+    LI      x5, \a, x7
+    LI      x6, \b, x7
+    PAD_DATA
+    \op     x10, x5, x6
+    PAD_DATA
+    CHECK   x10, \expect, \code
+.endm
+
+.macro TEST_RI op, a, imm, expect, code
+    lui     x10, 0x5a5a5
+    LI      x5, \a, x7
+    PAD_DATA
+    \op     x10, x5, \imm
+    PAD_DATA
+    CHECK   x10, \expect, \code
+.endm
+
+.macro TEST_BR op, a, b, taken, code
+    LI      x5, \a, x7
+    LI      x6, \b, x7
+    PAD_DATA
+    \op     x5, x6, .Lbr_taken\@
+    PAD_JUMP
+    .if \taken
+    TEST_FAIL \code
+    .else
+    jal     x0, .Lbr_done\@
+    PAD_JUMP
+    .endif
+.Lbr_taken\@:
+    .if !(\taken)
+    TEST_FAIL \code
+    .endif
+.Lbr_done\@:
+.endm
+
+/* ------------------------------------------------------------------
  * 计数器与打点（用 t6 存 I/O 基址）
  * ------------------------------------------------------------------ */
 
-/* READ_COUNTER rd, IO_CYCLE 等：读一个硬件计数器。值在对拍时不比较。 */
+/* READ_COUNTER rd, IO_CYCLE 等：读一个硬件计数器。这条 load 在期望轨迹里是 X 行，
+ * 值不比较。读数（以及由它算出的值）不能存进存储器、写给 MARK/FINISH 或用作
+ * 分支条件（实现约定第 3 节）；要测周期数，用 MARK_POINT。 */
 .macro READ_COUNTER rd, offset
     lui     t6, IO_BASE_HI
     PAD_DATA

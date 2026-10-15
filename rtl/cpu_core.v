@@ -48,6 +48,7 @@ module cpu_core (
     reg        ex_ALUASrc;
     reg [1:0]  ex_ALUBSrc;
     reg [3:0]  ex_ALUctr;
+    reg        ex_TargetSrc;
     reg        ex_Branch, ex_Jump, ex_MemRead, ex_MemWr, ex_MemtoReg, ex_RegWr;
 
     // EX/M
@@ -123,25 +124,27 @@ module cpu_core (
     wire       id_ALUASrc;
     wire [1:0] id_ALUBSrc;
     wire [3:0] id_ALUctr;
+    wire       id_TargetSrc;
     wire       id_Branch, id_Jump, id_MemRead, id_MemWr, id_MemtoReg, id_RegWr;
     wire       id_UseRs1, id_UseRs2;
 
     control u_ctrl (
-        .opcode   (id_inst[6:0]),
-        .funct3   (id_inst[14:12]),
-        .funct7   (id_inst[31:25]),
-        .ExtOp    (id_ExtOp),
-        .ALUASrc  (id_ALUASrc),
-        .ALUBSrc  (id_ALUBSrc),
-        .ALUctr   (id_ALUctr),
-        .Branch   (id_Branch),
-        .Jump     (id_Jump),
-        .MemRead  (id_MemRead),
-        .MemWr    (id_MemWr),
-        .MemtoReg (id_MemtoReg),
-        .RegWr    (id_RegWr),
-        .UseRs1   (id_UseRs1),
-        .UseRs2   (id_UseRs2)
+        .opcode    (id_inst[6:0]),
+        .funct3    (id_inst[14:12]),
+        .funct7    (id_inst[31:25]),
+        .ExtOp     (id_ExtOp),
+        .ALUASrc   (id_ALUASrc),
+        .ALUBSrc   (id_ALUBSrc),
+        .ALUctr    (id_ALUctr),
+        .TargetSrc (id_TargetSrc),
+        .Branch    (id_Branch),
+        .Jump      (id_Jump),
+        .MemRead   (id_MemRead),
+        .MemWr     (id_MemWr),
+        .MemtoReg  (id_MemtoReg),
+        .RegWr     (id_RegWr),
+        .UseRs1    (id_UseRs1),
+        .UseRs2    (id_UseRs2)
     );
 
     wire [31:0] id_busA, id_busB;
@@ -184,43 +187,45 @@ module cpu_core (
     // 课程数据通路里 ID/EX 前"选控制信号还是选 0"的选择器：停顿、冲刷、复位时写入气泡
     always @(posedge clk) begin
         if (rst || flush || stall) begin
-            ex_valid    <= 1'b0;
-            ex_pc       <= 32'b0;
-            ex_inst     <= 32'b0;
-            ex_rs1      <= 5'b0;
-            ex_rs2      <= 5'b0;
-            ex_rd       <= 5'b0;
-            ex_busA     <= 32'b0;
-            ex_busB     <= 32'b0;
-            ex_imm      <= 32'b0;
-            ex_ALUASrc  <= `ASRC_RS1;
-            ex_ALUBSrc  <= `BSRC_RS2;
-            ex_ALUctr   <= `ALU_ADD;
-            ex_Branch   <= 1'b0;
-            ex_Jump     <= 1'b0;
-            ex_MemRead  <= 1'b0;
-            ex_MemWr    <= 1'b0;
-            ex_MemtoReg <= 1'b0;
-            ex_RegWr    <= 1'b0;
+            ex_valid     <= 1'b0;
+            ex_pc        <= 32'b0;
+            ex_inst      <= 32'b0;
+            ex_rs1       <= 5'b0;
+            ex_rs2       <= 5'b0;
+            ex_rd        <= 5'b0;
+            ex_busA      <= 32'b0;
+            ex_busB      <= 32'b0;
+            ex_imm       <= 32'b0;
+            ex_ALUASrc   <= `ASRC_RS1;
+            ex_ALUBSrc   <= `BSRC_RS2;
+            ex_ALUctr    <= `ALU_ADD;
+            ex_TargetSrc <= `TSRC_PC;
+            ex_Branch    <= 1'b0;
+            ex_Jump      <= 1'b0;
+            ex_MemRead   <= 1'b0;
+            ex_MemWr     <= 1'b0;
+            ex_MemtoReg  <= 1'b0;
+            ex_RegWr     <= 1'b0;
         end else begin
-            ex_valid    <= id_valid;
-            ex_pc       <= id_pc;
-            ex_inst     <= id_inst;
-            ex_rs1      <= id_rs1;
-            ex_rs2      <= id_rs2;
-            ex_rd       <= id_rd;
-            ex_busA     <= id_busA;
-            ex_busB     <= id_busB;
-            ex_imm      <= id_imm;
-            ex_ALUASrc  <= id_ALUASrc;
-            ex_ALUBSrc  <= id_ALUBSrc;
-            ex_ALUctr   <= id_ALUctr;
-            ex_Branch   <= id_Branch;
-            ex_Jump     <= id_Jump;
-            ex_MemRead  <= id_MemRead;
-            ex_MemWr    <= id_MemWr;
-            ex_MemtoReg <= id_MemtoReg;
-            ex_RegWr    <= id_RegWr;
+            ex_valid     <= id_valid;
+            ex_pc        <= id_pc;
+            ex_inst      <= id_inst;
+            ex_rs1       <= id_rs1;
+            ex_rs2       <= id_rs2;
+            ex_rd        <= id_rd;
+            ex_busA      <= id_busA;
+            ex_busB      <= id_busB;
+            ex_imm       <= id_imm;
+            ex_ALUASrc   <= id_ALUASrc;
+            ex_ALUBSrc   <= id_ALUBSrc;
+            ex_ALUctr    <= id_ALUctr;
+            ex_TargetSrc <= id_TargetSrc;
+            ex_Branch    <= id_Branch;
+            ex_Jump      <= id_Jump;
+            ex_MemRead   <= id_MemRead;
+            ex_MemWr     <= id_MemWr;
+            ex_MemtoReg  <= id_MemtoReg;
+            ex_RegWr     <= id_RegWr;
         end
     end
 
@@ -272,20 +277,29 @@ module cpu_core (
     end
 
     wire [31:0] ex_aluout;
-    wire        ex_zero;
 
     alu u_alu (
         .a      (ex_alu_a),
         .b      (ex_alu_b),
         .ALUctr (ex_ALUctr),
-        .y      (ex_aluout),
-        .zero   (ex_zero)
+        .y      (ex_aluout)
     );
 
-    // 目标加法器：beq、jal 的跳转目标
-    wire [31:0] ex_target = ex_pc + ex_imm;
-    // 条件成立：基础版本只有 beq，即 rs1 - rs2 == 0
-    wire        ex_cond = ex_zero;
+    // 比较单元：和 ALU 并列，用转发之后的操作数，按 funct3 给出条件分支的"条件成立"
+    wire [2:0] ex_funct3 = ex_inst[14:12];
+    wire       ex_cond;
+
+    branch_cmp u_cmp (
+        .a      (ex_fwdA),
+        .b      (ex_fwdB),
+        .funct3 (ex_funct3),
+        .cond   (ex_cond)
+    );
+
+    // 目标加法器：分支、jal 是 PC + imm；jalr 是转发之后的 rs1 + imm。最低位清零（jalr 的要求，
+    // 分支和 jal 的目标本来就是偶数）
+    wire [31:0] ex_tgt_base = (ex_TargetSrc == `TSRC_RS1) ? ex_fwdA : ex_pc;
+    wire [31:0] ex_target   = (ex_tgt_base + ex_imm) & ~32'd1;
 
     // ==================================================================
     // EX/M
@@ -298,7 +312,7 @@ module cpu_core (
             m_rd       <= 5'b0;
             m_rs2      <= 5'b0;
             m_aluout   <= 32'b0;
-            m_target <= 32'b0;
+            m_target   <= 32'b0;
             m_cond     <= 1'b0;
             m_busB     <= 32'b0;
             m_Branch   <= 1'b0;
@@ -314,7 +328,7 @@ module cpu_core (
             m_rd       <= ex_rd;
             m_rs2      <= ex_rs2;
             m_aluout   <= ex_aluout;
-            m_target <= ex_target;
+            m_target   <= ex_target;
             m_cond     <= ex_cond;
             // 存进 EX/M 的 store 数据取转发选择器之后的 busB（ALUBSrc 选择器之前），
             // 否则"运算后隔一条 store"会把旧值写进存储器（设计文档第五节）
@@ -352,20 +366,20 @@ module cpu_core (
             wb_valid    <= 1'b0;
             wb_pc       <= 32'b0;
             wb_inst     <= 32'b0;
-            wb_rd     <= 5'b0;
+            wb_rd       <= 5'b0;
             wb_aluout   <= 32'b0;
             wb_dout     <= 32'b0;
             wb_MemtoReg <= 1'b0;
-            wb_RegWr  <= 1'b0;
+            wb_RegWr    <= 1'b0;
         end else begin
             wb_valid    <= m_valid;
             wb_pc       <= m_pc;
             wb_inst     <= m_inst;
-            wb_rd     <= m_rd;
+            wb_rd       <= m_rd;
             wb_aluout   <= m_aluout;
             wb_dout     <= m_dout;
             wb_MemtoReg <= m_MemtoReg;
-            wb_RegWr  <= m_RegWr;
+            wb_RegWr    <= m_RegWr;
         end
     end
 

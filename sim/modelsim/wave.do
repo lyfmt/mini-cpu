@@ -1,5 +1,7 @@
 # Basic wave layout, grouped by pipeline stage (loaded by run_one.do in the GUI).
 #   - IF .. WB : PC, instruction and valid bit of every stage (a bubble has valid = 0)
+#                EX also shows the branch condition (compare unit) and the jump target
+#                (PC + imm, or forwarded rs1 + imm for jalr, LSB cleared)
 #   - Hazard   : BusAFw/BusBFw with the forwarded operands, DiSrc with the store data
 #                before (m_busB) and after (m_DataIn) correction, stall, flush and
 #                the jump target (flush = M-stage redirect)
@@ -22,6 +24,8 @@ add wave -noupdate -expand -group ID                    -label valid $C/id_valid
 add wave -noupdate -expand -group EX -radix hexadecimal -label pc    $C/ex_pc
 add wave -noupdate -expand -group EX -radix hexadecimal -label inst  $C/ex_inst
 add wave -noupdate -expand -group EX                    -label valid $C/ex_valid
+add wave -noupdate -expand -group EX                    -label cond   $C/ex_cond
+add wave -noupdate -expand -group EX -radix hexadecimal -label target $C/ex_target
 
 add wave -noupdate -expand -group M  -radix hexadecimal -label pc    $C/m_pc
 add wave -noupdate -expand -group M  -radix hexadecimal -label inst  $C/m_inst

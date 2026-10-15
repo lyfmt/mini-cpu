@@ -1,14 +1,13 @@
 // 程序测试：读硬件计数器、写 MARK。
 //
-// 读 CYCLE/INSTRET/STALLS/FLUSHES 的 load 在期望轨迹里是 X 行（值不比较）；
-// MARK 让测试平台打印一行计数器快照，两次 MARK 之间是一个 10 次的循环。
-// 计数器的值不能直接和常数比较，只检查它们在增长：用 sltu 比较前后两次读数，
-// 结果（1）是确定的，照常对拍。
+// 读 CYCLE/INSTRET/STALLS/FLUSHES 的 load 在期望轨迹里是 X 行（只比 pc 和 rd，
+// 不比值）。按实现约定第 3 节，读数不存进存储器、不写给 MARK/FINISH、不参与
+// 分支，也不参与任何运算；读进来的寄存器随后被覆盖。两次 MARK 之间是一个
+// 10 次的循环，测试平台打印的两行计数器快照之差就是这段代码的开销。
 //
 // 失败码：
-//   1  第二次读的 CYCLE 大于第一次
-//   2  第二次读的 INSTRET 大于第一次
-//   3  循环执行了 10 次
+//   1  循环执行了 10 次
+//   2  读计数器的寄存器随后被正常覆盖（读数不影响后面的指令）
 #include "test.h"
 
 TEST_BEGIN
@@ -34,10 +33,16 @@ TEST_BEGIN
     READ_COUNTER x9, IO_STALLS
     READ_COUNTER x10, IO_FLUSHES
     PAD_DATA
-    sltu    x11, x1, x3
-    sltu    x12, x2, x4
+    // 覆盖所有读过计数器的寄存器
+    LI      x1, 0x11
+    LI      x2, 0x22
+    LI      x3, 0x33
+    LI      x4, 0x44
+    LI      x9, 0x99
+    LI      x10, 0x100
+    PAD_DATA
 
-    CHECK   x11, 1, 1
-    CHECK   x12, 1, 2
-    CHECK   x5, 10, 3
+    CHECK   x5, 10, 1
+    CHECK   x4, 0x44, 2
+    CHECK   x10, 0x100, 2
 TEST_END

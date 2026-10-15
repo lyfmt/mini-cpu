@@ -8,6 +8,11 @@ build/<variant>/<isa>/<suite>/<name>/（实现约定第 5 节）。选 ISA 是�
 --isa rv32i 同时包括 base9 的测试。每个变体另写 build/<variant>/tests.lst，
 列出这次构建的测试目录，供 ModelSim 批量脚本使用。
 
+--random N --seed S 另外加 N 个随机测试（scripts/gen_random.py），种子 S..S+N-1，
+ISA 取 --isa 那一层（加 --random-all-isas 则每一层各 N 个）。源码生成到
+build/src/<isa>/rand/seed<k>.S，测试 id 是 <isa>/rand/seed<k>；--suite 和 -k
+同样筛选它们（suite 名是 rand）。
+
 每个测试依次：
   1. riscv64-elf-gcc 汇编、链接（pad 变体加 -DPAD）；
   2. 拆成 imem.hex / dmem.hex；
@@ -32,14 +37,16 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / 'model'))
 sys.path.insert(0, str(REPO / 'scripts'))
 
-import iss       # noqa: E402
-import elf2hex   # noqa: E402
+import iss         # noqa: E402
+import elf2hex     # noqa: E402
+import gen_random  # noqa: E402
 
 ISA_ORDER = ['base9', 'rv32i', 'rv32i_qmul']
 VARIANTS = ['pad', 'nopad']
 SW_TESTS = REPO / 'sw' / 'tests'
 SW_COMMON = REPO / 'sw' / 'common'
 BUILD = REPO / 'build'
+GEN_SRC = BUILD / 'src'
 
 PREFIX = os.environ.get('RISCV_PREFIX', 'riscv64-elf-')
 CFLAGS = ['-march=rv32i', '-mabi=ilp32', '-nostdlib', '-nostartfiles', '-static',
@@ -69,11 +76,18 @@ def isas_upto(isa):
     return ISA_ORDER[:ISA_ORDER.index(isa) + 1]
 
 
-def discover(isa, suites=None, patterns=None):
-    """按 ISA 顺序、suite、文件名列出要跑的测试。
+def selected(test, suites, patterns):
+    """suites：只要这些 suite；patterns：测试 id（isa/suite/name）或名字匹配其中任一通配。"""
+    if suites and test.suite not in suites:
+        return False
+    if patterns and not any(fnmatch.fnmatch(test.id, p) or fnmatch.fnmatch(test.name, p)
+                            for p in patterns):
+        return False
+    return True
 
-    suites：只要这些 suite；patterns：测试 id（isa/suite/name）或名字匹配其中任一通配。
-    """
+
+def discover(isa, suites=None, patterns=None):
+    """按 ISA 顺序、suite、文件名列出 sw/tests 下要跑的测试。"""
     tests = []
     for i in isas_upto(isa):
         root = SW_TESTS / i
@@ -81,11 +95,25 @@ def discover(isa, suites=None, patterns=None):
             continue
         for src in sorted(root.glob('*/*.S')):
             t = Test(i, src.parent.name, src.stem, src)
-            if suites and t.suite not in suites:
+            if selected(t, suites, patterns):
+                tests.append(t)
+    return tests
+
+
+def random_tests(isas, count, seed, suites=None, patterns=None):
+    """生成随机测试的源码，返回 Test 列表。内容没变的源文件不重写。"""
+    tests = []
+    for isa in isas:
+        for k in range(seed, seed + count):
+            name = 'seed%d' % k
+            t = Test(isa, 'rand', name, GEN_SRC / isa / 'rand' / (name + '.S'))
+            if not selected(t, suites, patterns):
                 continue
-            if patterns and not any(fnmatch.fnmatch(t.id, p) or fnmatch.fnmatch(t.name, p)
-                                    for p in patterns):
-                continue
+            text = gen_random.generate(isa, k)
+            if not t.src.is_file() or t.src.read_text() != text:
+                t.src.parent.mkdir(parents=True, exist_ok=True)
+                with open(t.src, 'w', newline='\n') as f:
+                    f.write(text)
             tests.append(t)
     return tests
 
@@ -201,6 +229,12 @@ def add_selection_args(parser):
                         help='only tests whose id or name matches this glob; may repeat')
     parser.add_argument('-j', dest='jobs', type=int, default=os.cpu_count() or 1,
                         help='parallel jobs (default: number of CPUs)')
+    parser.add_argument('--random', type=int, default=0, metavar='N',
+                        help='also generate N random tests (suite "rand") for the --isa level')
+    parser.add_argument('--seed', type=int, default=1,
+                        help='first random seed (default: %(default)s)')
+    parser.add_argument('--random-all-isas', action='store_true',
+                        help='N random tests for every ISA level up to --isa, not just the top one')
 
 
 def selection(args):
@@ -208,7 +242,11 @@ def selection(args):
     if args.suite:
         suites = set(s for item in args.suite for s in item.split(',') if s)
     variants = VARIANTS if args.variant == 'both' else [args.variant]
-    return discover(args.isa, suites, args.patterns), variants
+    tests = discover(args.isa, suites, args.patterns)
+    if args.random:
+        isas = isas_upto(args.isa) if args.random_all_isas else [args.isa]
+        tests += random_tests(isas, args.random, args.seed, suites, args.patterns)
+    return tests, variants
 
 
 def main():

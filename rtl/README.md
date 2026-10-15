@@ -1,18 +1,19 @@
 # rtl/ — 五级流水线 RISC-V CPU
 
-设计依据是设计文档第三、四、五、八节；接口细节见实现约定。只用 Verilog-2001，全部逻辑只用时钟上升沿，复位是同步、高有效。
+设计依据是设计文档第二至六节和第八节；接口细节见实现约定。只用 Verilog-2001，全部逻辑只用时钟上升沿，复位是同步、高有效。
 
 ## 模块
 
 | 文件 | 模块 | 作用 |
 |---|---|---|
-| `defines.vh` | — | opcode、ExtOp、ALUASrc/ALUBSrc、ALUctr、转发选择、I/O 偏移的编码 |
+| `defines.vh` | — | opcode、ExtOp、ALUASrc/ALUBSrc、TargetSrc、ALUctr、分支条件、转发选择、I/O 偏移的编码 |
 | `cpu_top.v` | `cpu_top` | 顶层：流水线 + 指令存储器 + 数据存储器 + I/O；地址第 31 位选数据存储器或 I/O |
 | `cpu_core.v` | `cpu_core` | 五级流水线、四个流水线寄存器、各段选择器 |
-| `control.v` | `control` | 主控制器（ID 段），一次生成全部控制信号；不认识的指令输出气泡 |
+| `control.v` | `control` | 主控制器（ID 段），一次生成全部控制信号；不在 rv32i 范围内的指令输出气泡 |
 | `extender.v` | `extender` | 扩展器，ExtOp 选 I/S/B/U/J 五种立即数 |
 | `regfile.v` | `regfile` | 寄存器堆，两读一写，x0 恒 0，同周期写读内部旁路 |
-| `alu.v` | `alu` | ALU：加、减、有符号/无符号比较、或、直通 B；zero 给 beq 用 |
+| `alu.v` | `alu` | ALU：加、减、与、或、异或、三种移位、有符号/无符号比较、直通 B |
+| `branch_cmp.v` | `branch_cmp` | 比较单元（EX 段，和 ALU 并列）：按 funct3 给出六种分支的"条件成立" |
 | `forward_unit.v` | `forward_unit` | 转发单元：EX 段的 BusAFw、BusBFw，M 段的 DiSrc |
 | `hazard_unit.v` | `hazard_unit` | 冒险检测：load-use 停顿（stall）、跳转冲刷（flush） |
 | `imem.v` | `imem` | 指令存储器，4 KB，组合逻辑读出；参数 `INIT_FILE` |
@@ -30,7 +31,8 @@ tb_top
     │   ├── u_ext  extender
     │   ├── u_hzd  hazard_unit
     │   ├── u_fwd  forward_unit
-    │   └── u_alu  alu
+    │   ├── u_alu  alu
+    │   └── u_cmp  branch_cmp
     ├── u_imem     imem
     ├── u_dmem     dmem
     └── u_io       io_regs
@@ -68,15 +70,15 @@ tb_top
 | ID | `id_rs1` `id_rs2` `id_rd` | 寄存器号（固定取自 inst[19:15]、[24:20]、[11:7]） |
 | ID | `id_busA` `id_busB` | 寄存器堆读出（已含同周期旁路） |
 | ID | `id_imm` | 扩展器输出 |
-| ID | `id_ExtOp` `id_ALUASrc` `id_ALUBSrc` `id_ALUctr` `id_Branch` `id_Jump` `id_MemRead` `id_MemWr` `id_MemtoReg` `id_RegWr` | 主控制器输出 |
+| ID | `id_ExtOp` `id_ALUASrc` `id_ALUBSrc` `id_ALUctr` `id_TargetSrc` `id_Branch` `id_Jump` `id_MemRead` `id_MemWr` `id_MemtoReg` `id_RegWr` | 主控制器输出 |
 | ID | `id_UseRs1` `id_UseRs2` | 是否读 rs1/rs2（load-use 检测用） |
 | ID/EX | `ex_rs1` `ex_rs2` `ex_rd` `ex_busA` `ex_busB` `ex_imm` 及 `ex_<控制信号>` | |
 | EX | `ex_BusAFw` `ex_BusBFw` | 转发选择（00 ID 段读出值，01 WB 写回值，10 EX/M 运算结果） |
 | EX | `ex_fwdA` `ex_fwdB` | 转发选择器输出 |
 | EX | `ex_alu_a` `ex_alu_b` | ALU 两端（ALUASrc、ALUBSrc 选择之后） |
-| EX | `ex_aluout` `ex_zero` | ALU 结果、Zero |
-| EX | `ex_target` | 目标加法器 PC + imm |
-| EX | `ex_cond` | 条件成立（基础版本即 Zero） |
+| EX | `ex_aluout` | ALU 结果 |
+| EX | `ex_funct3` `ex_cond` | 比较单元的条件选择（即 `ex_inst[14:12]`）和"条件成立" |
+| EX | `ex_tgt_base` `ex_target` | 目标加法器的基地址（PC 或转发之后的 rs1）、跳转目标（最低位已清零） |
 | EX/M | `m_rd` `m_rs2` `m_aluout` `m_target` `m_cond` `m_busB` 及 `m_<控制信号>` | `m_busB` 是转发之后的 store 数据 |
 | M | `m_redirect` | `Branch & 条件成立 \| Jump`，为 1 时 PC 换成 `m_target` |
 | M | `m_DiSrc` `m_DataIn` | DiSrc 及修正后的 store 数据 |
@@ -102,10 +104,42 @@ tb_top
 | ExtOp | 0 I，1 S，2 B，3 U，4 J |
 | ALUASrc | 0 rs1，1 PC |
 | ALUBSrc | 00 rs2，01 立即数，10 常数 4 |
-| ALUctr | 加 0000，减 1000，slt 0010，sltu 0011，或 0110，直通 B 1111 |
+| ALUctr | 加 0000，左移 0001，slt 0010，sltu 0011，异或 0100，逻辑右移 0101，或 0110，与 0111，减 1000，算术右移 1101，直通 B 1111 |
+| TargetSrc | 0 PC（分支、jal），1 rs1（jalr） |
+| 分支条件（funct3） | beq 000，bne 001，blt 100，bge 101，bltu 110，bgeu 111 |
 | BusAFw/BusBFw | 00 ID 段读出值，01 WB 写回值，10 EX/M 运算结果 |
 
-ALUctr 对 R 型运算取 `{inst[30], funct3}`，以后扩展整组运算时译码器可以把 funct3 原样交给 ALU。
+ALUctr 的编码就是 `{inst[30], funct3}`：R 型运算和移位立即数直接取它（add/sub、srl/sra、srli/srai 靠第 30 位区分），其余立即数运算取 `{0, funct3}`，因为它们的第 30 位是立即数的一位，addi 没有减法版本。移位量只取 B 端的低 5 位。比较单元直接用 EX 段指令的 funct3，不另设控制信号。
+
+## 各指令的控制信号
+
+"–"表示取什么值都不影响结果，硬件里给的是默认值（ExtOp I、ALUASrc rs1、ALUBSrc rs2、ALUctr 加、TargetSrc PC）。
+
+| 指令 | ExtOp | ALUASrc | ALUBSrc | ALUctr | TargetSrc | Branch | Jump | MemRead | MemWr | MemtoReg | RegWr | UseRs1 | UseRs2 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| add sub sll slt sltu xor srl sra or and | – | rs1 | rs2 | `{inst[30], funct3}` | – | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 1 |
+| addi slti sltiu xori ori andi | I | rs1 | 立即数 | `{0, funct3}` | – | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 0 |
+| slli srli srai | I | rs1 | 立即数 | `{inst[30], funct3}` | – | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 0 |
+| lui | U | – | 立即数 | 直通 B | – | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
+| auipc | U | PC | 立即数 | 加 | – | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
+| lw | I | rs1 | 立即数 | 加 | – | 0 | 0 | 1 | 0 | 1 | 1 | 1 | 0 |
+| sw | S | rs1 | 立即数 | 加 | – | 0 | 0 | 0 | 1 | 0 | 0 | 1 | 1 |
+| beq bne blt bge bltu bgeu | B | – | – | – | PC | 1 | 0 | 0 | 0 | 0 | 0 | 1 | 1 |
+| jal | J | PC | 4 | 加 | PC | 0 | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
+| jalr | I | PC | 4 | 加 | rs1 | 0 | 1 | 0 | 0 | 0 | 1 | 1 | 0 |
+| 非法指令 | I | rs1 | rs2 | 加 | PC | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+- 分支不再占用 ALU：条件由比较单元用转发之后的 rs1、rs2 给出，目标由目标加法器算。ALU 对分支的输出没有用处。
+- jal、jalr 的返回地址 PC + 4 都由 ALU 算（A 端 PC，B 端常数 4）；目标由目标加法器算，jalr 的基地址取转发之后的 rs1，结果最低位清零。两者都在 M 段重定向，冲刷 3 条。
+- sw 的 UseRs2 = 1 是字面意思（它确实读 rs2），冒险检测单元另外用 MemWr 把 store 数据排除在 load-use 之外。
+
+非法指令输出气泡的控制信号（有效位照常为 1，所以仍计入 INSTRET）。不在 rv32i 范围内的编码包括：
+
+- opcode 不是上表几种的：fence、ecall/ebreak、CSR 指令、custom-0（qmul 在阶段 4 才加）、低两位不是 11 的字、全 0 字；
+- lw、sw 以外的 load/store funct3（lb、lh、lbu、lhu、sb、sh 等）；
+- R 型里 funct7 既不是 0000000、也不是"0100000 配 add/srl 的 funct3"的；
+- 移位立即数里 inst[31:25] 不合法的（slli 必须是 0000000，srli/srai 必须是 0000000/0100000，所以第 25 位非 0 一定非法）；
+- 分支 funct3 为 010、011 的，jalr funct3 不为 000 的。
 
 ## I/O 与计数器
 
@@ -118,20 +152,20 @@ ALUctr 对 R 型运算取 `{inst[30], funct3}`，以后扩展整组运算时译�
 
 ## 冒险处理
 
-设计文档第五节的每一项在 RTL 里的位置：
+设计文档第五节的每一项在 RTL 里的位置。扩展指令没有改动冒险逻辑：新指令的结果仍然走 ALU 通路，源寄存器仍是 rs1、rs2，只要 UseRs1/UseRs2 对每条指令给对即可。
 
 | 机制 | 位置 | 做法 |
 |---|---|---|
 | EX/M 转发（10） | `forward_unit.v` | M 段指令 RegWr=1、不是 load、rd≠0，且 rd 等于 EX 段的 rs1/rs2 |
 | WB 转发（01） | `forward_unit.v` | WB 段指令 RegWr=1、rd≠0，且 rd 等于 EX 段的 rs1/rs2；送的是 `wb_busW`（MemtoReg 之后） |
 | M 段优先 | `forward_unit.v` | 先判断 M 段，再判断 WB 段 |
-| 转发选择器 | `cpu_core.v` EX 段 | `ex_fwdA`、`ex_fwdB`，ALU 两端、分支比较、store 数据都用它们 |
+| 转发选择器 | `cpu_core.v` EX 段 | `ex_fwdA`、`ex_fwdB`：ALU 两端、比较单元、jalr 的目标基地址、store 数据都用它们 |
 | store 数据取转发后的 busB | `cpu_core.v` EX/M | `m_busB <= ex_fwdB`（ALUBSrc 选择器之前） |
 | DiSrc | `forward_unit.v` 判断，`cpu_core.v` M 段选择 | M 段是 store、WB 段写的正是它的 rs2：`m_DataIn = wb_busW` |
 | 寄存器堆同周期旁路 | `regfile.v` | 写读同一寄存器（非 x0）时读端口直接输出写入值 |
-| load-use 停顿 | `hazard_unit.v` | EX 段是 load、rd≠0，且等于 ID 段真正读的源寄存器（UseRs1/UseRs2）；store 的 rs2 不算，store 的 rs1 照样算 |
+| load-use 停顿 | `hazard_unit.v` | EX 段是 load、rd≠0，且等于 ID 段真正读的源寄存器（UseRs1/UseRs2）；store 的 rs2 不算，store 的 rs1 照样算。分支、jalr 依赖 load 时同样停顿一拍 |
 | 停顿的执行 | `cpu_core.v` | PC、IF/ID 保持，ID/EX 写入气泡 |
-| 冲刷 | `hazard_unit.v`：`flush = m_redirect`；`cpu_core.v` | PC 换成 `m_target`，IF/ID、ID/EX、EX/M 写入气泡 |
+| 冲刷 | `hazard_unit.v`：`flush = m_redirect`；`cpu_core.v` | 分支成立、jal、jalr 都一样：PC 换成 `m_target`，IF/ID、ID/EX、EX/M 写入气泡 |
 | 冲刷优先于停顿 | `hazard_unit.v`：`stall = load_use & ~flush`；`cpu_core.v` 各寄存器先判断 flush | 被冲刷的指令不停顿，PC 换成目标；STALLS 也不计这一拍 |
 
 两处行为需要说明：
@@ -208,7 +242,7 @@ PIPE     22 | IF 00000058 | ID -------- | EX -------- | M -------- | WB 00000048
 | `regress.bat` | Windows 入口：`sim\modelsim\regress.bat [pad\|nopad]`，日志在 `build/modelsim/regress_<变体>.log`，全部通过时退出码为 0 |
 | `run_one.do` | 跑单个测试；在 GUI 里自动加载 `wave.do` |
 | `run_one.bat` | Windows 入口：`sim\modelsim\run_one.bat <测试目录> [plusarg ...]`，打开 GUI |
-| `wave.do` | 基本波形布局：各级 PC/指令/有效位；冒险信号（BusAFw/BusBFw 及转发后的操作数、DiSrc 及修正前后的 store 数据、stall、flush、跳转目标）；寄存器堆和数据存储器写端口；I/O |
+| `wave.do` | 基本波形布局：各级 PC/指令/有效位，EX 段另有分支条件和跳转目标；冒险信号（BusAFw/BusBFw 及转发后的操作数、DiSrc 及修正前后的 store 数据、stall、flush、跳转目标）；寄存器堆和数据存储器写端口；I/O |
 
 在 ModelSim 里也可以直接执行：
 
