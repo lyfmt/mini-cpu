@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="556" viewBox="0 0 1200 556">
+  <style>
+    text { font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif; fill: #212529; }
+    .h  { font-size: 19px; font-weight: bold; }
+    .sub { font-size: 13px; fill: #495057; }
+    .cyc { font-size: 13px; font-weight: bold; fill: #495057; }
+    .ins { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 13px; }
+    .pc  { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 12px; fill: #868e96; }
+    .cell { font-size: 13px; font-weight: bold; }
+    .note { font-size: 13px; }
+    .nb { font-size: 13px; font-weight: bold; }
+    .code { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 12.5px; }
+    .small { font-size: 11.5px; fill: #495057; }
+  </style>
+  <defs>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#f1f3f5"/><line x1="0" y1="0" x2="0" y2="6" stroke="#ced4da" stroke-width="2"/>
+    </pattern>
+    <marker id="a_blue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#1c7ed6"/></marker>
+    <marker id="a_green" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#2f9e44"/></marker>
+    <marker id="a_orange" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#e8590c"/></marker>
+    <marker id="a_pink" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#d6336c"/></marker>
+    <marker id="a_violet" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#7048e8"/></marker>
+    <marker id="a_gray" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#495057"/></marker>
+    <marker id="a_red" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#e03131"/></marker>
+    <marker id="a_teal" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#0c8599"/></marker>
+  </defs>
+  <rect width="1200" height="556" fill="#ffffff"/>
+  <text x="600" y="30" text-anchor="middle" class="h">store 数据的两条修正路径：EX 段转发进 m_busB + M 段 DiSrc</text>
+  <text x="600" y="52" text-anchor="middle" class="sub">演示 storedata（prebuilt/base9/demo/storedata），x5、x6 事先装旧值 0x555、0x666；每一格取自仿真的 +PIPE 时空图</text>
+  <rect x="10" y="64" width="1180" height="182" rx="8" fill="#fcfcfd" stroke="#e9ecef"/>
+  <text x="24" y="86" class="nb">情况 1：lw 后紧跟 sw，依赖在 store 数据 —— 不停顿，M 段用 DiSrc 补</text>
+  <rect x="511" y="96" width="88" height="112" fill="#868e96" fill-opacity="0.1" stroke="#868e96" stroke-opacity="0.5" stroke-dasharray="5 3" rx="4"/>
+  <rect x="601" y="96" width="88" height="112" fill="#2f9e44" fill-opacity="0.15" stroke="#2f9e44" stroke-opacity="0.5" stroke-dasharray="5 3" rx="4"/>
+  <text x="285.0" y="112" text-anchor="middle" class="cyc">C16</text>
+  <text x="375.0" y="112" text-anchor="middle" class="cyc">C17</text>
+  <text x="465.0" y="112" text-anchor="middle" class="cyc">C18</text>
+  <text x="555.0" y="112" text-anchor="middle" class="cyc">C19</text>
+  <text x="645.0" y="112" text-anchor="middle" class="cyc">C20</text>
+  <text x="735.0" y="112" text-anchor="middle" class="cyc">C21</text>
+  <line x1="20" y1="120" x2="780" y2="120" stroke="#e9ecef"/>
+  <text x="24" y="146.0" class="pc">0x40</text>
+  <text x="68" y="146.0" class="ins">lw x5, 0(x4)</text>
+  <rect x="244" y="125" width="82" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="285.0" y="146.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="334" y="125" width="82" height="32" rx="5" fill="#fff3bf" stroke="#868e96"/>
+  <text x="375.0" y="146.0" text-anchor="middle" class="cell">ID</text>
+  <rect x="424" y="125" width="82" height="32" rx="5" fill="#d3f9d8" stroke="#868e96"/>
+  <text x="465.0" y="146.0" text-anchor="middle" class="cell">EX</text>
+  <rect x="514" y="125" width="82" height="32" rx="5" fill="#ffe8cc" stroke="#868e96"/>
+  <text x="555.0" y="146.0" text-anchor="middle" class="cell">M</text>
+  <rect x="604" y="125" width="82" height="32" rx="5" fill="#e5dbff" stroke="#868e96"/>
+  <text x="645.0" y="146.0" text-anchor="middle" class="cell">WB</text>
+  <line x1="20" y1="162" x2="780" y2="162" stroke="#e9ecef"/>
+  <text x="24" y="188.0" class="pc">0x44</text>
+  <text x="68" y="188.0" class="ins">sw x5, 8(x4)</text>
+  <rect x="334" y="167" width="82" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="375.0" y="188.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="424" y="167" width="82" height="32" rx="5" fill="#fff3bf" stroke="#868e96"/>
+  <text x="465.0" y="188.0" text-anchor="middle" class="cell">ID</text>
+  <rect x="514" y="167" width="82" height="32" rx="5" fill="#d3f9d8" stroke="#868e96"/>
+  <text x="555.0" y="188.0" text-anchor="middle" class="cell">EX</text>
+  <rect x="604" y="167" width="82" height="32" rx="5" fill="#ffe8cc" stroke="#868e96"/>
+  <text x="645.0" y="188.0" text-anchor="middle" class="cell">M</text>
+  <rect x="694" y="167" width="82" height="32" rx="5" fill="#e5dbff" stroke="#868e96"/>
+  <text x="735.0" y="188.0" text-anchor="middle" class="cell">WB</text>
+  <line x1="20" y1="204" x2="780" y2="204" stroke="#e9ecef"/>
+  <text x="555.0" y="222" text-anchor="middle" class="nb" style="fill:#495057">不转发 不停</text>
+  <text x="645.0" y="222" text-anchor="middle" class="nb" style="fill:#2f9e44">DiSrc = 1</text>
+  <rect x="790" y="96" width="390" height="138" rx="6" fill="#ebfbee" stroke="#2f9e44" stroke-width="1.6"/>
+  <text x="800" y="116" class="nb" style="fill:#2f9e44">DiSrc  forward_unit.v:38，cpu_core.v:378</text>
+  <text x="800" y="136" class="note">C19 sw 在 EX、lw 在 M：M 段的 load 不作转发来源，</text>
+  <text x="800" y="155" class="note">sw 的 rs2 也不触发 load-use（数据到 M 段才用）</text>
+  <text x="800" y="174" class="note">C20 sw 在 M、lw 在 WB，wb_rd == m_rs2：DiSrc = 1</text>
+  <text x="800" y="193" class="code">m_busB = 0x555（旧值）→ m_DataIn = wb_busW</text>
+  <text x="800" y="212" class="code">DMem[0x10014] ← 0x13579bdf  ✓</text>
+  <rect x="10" y="256" width="1180" height="214" rx="8" fill="#fcfcfd" stroke="#e9ecef"/>
+  <text x="24" y="278" class="nb">情况 2：运算后隔一条 sw —— 课程数据通路的缺口，靠"store 数据取转发之后的 busB"补上</text>
+  <rect x="481" y="288" width="78" height="154" fill="#868e96" fill-opacity="0.1" stroke="#868e96" stroke-opacity="0.5" stroke-dasharray="5 3" rx="4"/>
+  <rect x="561" y="288" width="78" height="154" fill="#1c7ed6" fill-opacity="0.13" stroke="#1c7ed6" stroke-opacity="0.5" stroke-dasharray="5 3" rx="4"/>
+  <rect x="641" y="288" width="78" height="154" fill="#2f9e44" fill-opacity="0.13" stroke="#2f9e44" stroke-opacity="0.5" stroke-dasharray="5 3" rx="4"/>
+  <text x="280.0" y="304" text-anchor="middle" class="cyc">C21</text>
+  <text x="360.0" y="304" text-anchor="middle" class="cyc">C22</text>
+  <text x="440.0" y="304" text-anchor="middle" class="cyc">C23</text>
+  <text x="520.0" y="304" text-anchor="middle" class="cyc">C24</text>
+  <text x="600.0" y="304" text-anchor="middle" class="cyc">C25</text>
+  <text x="680.0" y="304" text-anchor="middle" class="cyc">C26</text>
+  <text x="760.0" y="304" text-anchor="middle" class="cyc">C27</text>
+  <line x1="20" y1="312" x2="800" y2="312" stroke="#e9ecef"/>
+  <text x="24" y="338.0" class="pc">0x54</text>
+  <text x="68" y="338.0" class="ins">add x6, x1, x2</text>
+  <rect x="244" y="317" width="72" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="280.0" y="338.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="324" y="317" width="72" height="32" rx="5" fill="#fff3bf" stroke="#868e96"/>
+  <text x="360.0" y="338.0" text-anchor="middle" class="cell">ID</text>
+  <rect x="404" y="317" width="72" height="32" rx="5" fill="#d3f9d8" stroke="#868e96"/>
+  <text x="440.0" y="338.0" text-anchor="middle" class="cell">EX</text>
+  <rect x="484" y="317" width="72" height="32" rx="5" fill="#ffe8cc" stroke="#868e96"/>
+  <text x="520.0" y="338.0" text-anchor="middle" class="cell">M</text>
+  <rect x="564" y="317" width="72" height="32" rx="5" fill="#e5dbff" stroke="#868e96"/>
+  <text x="600.0" y="338.0" text-anchor="middle" class="cell">WB</text>
+  <line x1="20" y1="354" x2="800" y2="354" stroke="#e9ecef"/>
+  <text x="24" y="380.0" class="pc">0x58</text>
+  <text x="68" y="380.0" class="ins">add x0,x0,x0 (nop)</text>
+  <rect x="324" y="359" width="72" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="360.0" y="380.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="404" y="359" width="72" height="32" rx="5" fill="#fff3bf" stroke="#868e96"/>
+  <text x="440.0" y="380.0" text-anchor="middle" class="cell">ID</text>
+  <rect x="484" y="359" width="72" height="32" rx="5" fill="#d3f9d8" stroke="#868e96"/>
+  <text x="520.0" y="380.0" text-anchor="middle" class="cell">EX</text>
+  <rect x="564" y="359" width="72" height="32" rx="5" fill="#ffe8cc" stroke="#868e96"/>
+  <text x="600.0" y="380.0" text-anchor="middle" class="cell">M</text>
+  <rect x="644" y="359" width="72" height="32" rx="5" fill="#e5dbff" stroke="#868e96"/>
+  <text x="680.0" y="380.0" text-anchor="middle" class="cell">WB</text>
+  <line x1="20" y1="396" x2="800" y2="396" stroke="#e9ecef"/>
+  <text x="24" y="422.0" class="pc">0x5c</text>
+  <text x="68" y="422.0" class="ins">sw x6, 12(x4)</text>
+  <rect x="404" y="401" width="72" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="440.0" y="422.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="484" y="401" width="72" height="32" rx="5" fill="#fff3bf" stroke="#868e96"/>
+  <text x="520.0" y="422.0" text-anchor="middle" class="cell">ID</text>
+  <rect x="564" y="401" width="72" height="32" rx="5" fill="#d3f9d8" stroke="#868e96"/>
+  <text x="600.0" y="422.0" text-anchor="middle" class="cell">EX</text>
+  <rect x="644" y="401" width="72" height="32" rx="5" fill="#ffe8cc" stroke="#868e96"/>
+  <text x="680.0" y="422.0" text-anchor="middle" class="cell">M</text>
+  <rect x="724" y="401" width="72" height="32" rx="5" fill="#e5dbff" stroke="#868e96"/>
+  <text x="760.0" y="422.0" text-anchor="middle" class="cell">WB</text>
+  <line x1="20" y1="438" x2="800" y2="438" stroke="#e9ecef"/>
+  <text x="520.0" y="456" text-anchor="middle" class="nb" style="fill:#495057">读到旧值</text>
+  <text x="600.0" y="456" text-anchor="middle" class="nb" style="fill:#1c7ed6">B ← WB</text>
+  <text x="680.0" y="456" text-anchor="middle" class="nb" style="fill:#2f9e44">DiSrc = 0</text>
+  <rect x="810" y="290" width="370" height="82" rx="6" fill="#fff5f5" stroke="#e03131" stroke-width="1.6"/>
+  <text x="820" y="310" class="note">课程图：EX/M 的 store 数据取转发之前的 busB</text>
+  <text x="820" y="329" class="note">C25 存进 0x666；C26 WB 是 nop，DiSrc 匹配不上</text>
+  <text x="820" y="348" class="note">→ 存储器写进旧值 0x666  ×</text>
+  <rect x="810" y="380" width="370" height="82" rx="6" fill="#ebfbee" stroke="#2f9e44" stroke-width="1.6"/>
+  <text x="820" y="400" class="code">本设计：m_busB &lt;= ex_fwdB    cpu_core.v:361</text>
+  <text x="820" y="419" class="note">C25 BusBFw = 01，fwdB = 0x300 存进 m_busB</text>
+  <text x="820" y="438" class="code">C26 DMem[0x10018] ← 0x300  ✓</text>
+  <rect x="10" y="480" width="1180" height="66" rx="6" fill="#f8f9fa" stroke="#495057" stroke-width="1.6"/>
+  <text x="20" y="500" class="nb" style="fill:#495057">分工</text>
+  <text x="20" y="520" class="note">距离 1、2 的依赖都在 EX 段转发进 m_busB；只有"load 紧跟 store"时数据在 EX 段还没出来，才需要 M 段的 DiSrc。所以两者都要，load 后紧跟 store 也就不必停顿。</text>
+</svg>

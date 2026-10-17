@@ -10,3 +10,7 @@ transcript
 *.wlf
 .Xil/
 *.jou
+
+# Vivado 工程与综合输出（由 vivado/create_project.tcl、syn/run_syn.bat 重新生成）
+/vivado/mini_cpu/
+/syn/out/

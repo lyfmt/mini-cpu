@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <style>
+    text { font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif; fill: #212529; }
+    .h  { font-size: 19px; font-weight: bold; }
+    .sub { font-size: 13px; fill: #495057; }
+    .cyc { font-size: 13px; font-weight: bold; fill: #495057; }
+    .ins { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 13px; }
+    .pc  { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 12px; fill: #868e96; }
+    .cell { font-size: 13px; font-weight: bold; }
+    .note { font-size: 13px; }
+    .nb { font-size: 13px; font-weight: bold; }
+    .code { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 12.5px; }
+    .small { font-size: 11.5px; fill: #495057; }
+  </style>
+  <defs>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#f1f3f5"/><line x1="0" y1="0" x2="0" y2="6" stroke="#ced4da" stroke-width="2"/>
+    </pattern>
+    <marker id="a_blue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#1c7ed6"/></marker>
+    <marker id="a_green" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#2f9e44"/></marker>
+    <marker id="a_orange" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#e8590c"/></marker>
+    <marker id="a_pink" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#d6336c"/></marker>
+    <marker id="a_violet" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#7048e8"/></marker>
+    <marker id="a_gray" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#495057"/></marker>
+    <marker id="a_red" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#e03131"/></marker>
+    <marker id="a_teal" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#0c8599"/></marker>
+  </defs>
+  <rect width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="30" text-anchor="middle" class="h">hazard_unit.v：load-use 检测与"冲刷优先"（5 行组合逻辑）</text>
+  <text x="600" y="52" text-anchor="middle" class="sub">门的位置对应源码行号；粉色 = 停顿通路，橙色 = 冲刷通路</text>
+  <text x="215" y="115" text-anchor="end" class="code">id_UseRs1</text>
+  <line x1="222" y1="110" x2="330" y2="110" stroke="#495057" stroke-width="1.6"/>
+  <rect x="40" y="136" width="180" height="28" rx="5" fill="#fff" stroke="#495057"/>
+  <text x="130" y="155" text-anchor="middle" class="code">id_rs1 == ex_rd</text>
+  <line x1="220" y1="150" x2="330" y2="150" stroke="#495057" stroke-width="1.6"/>
+  <text x="215" y="220" text-anchor="end" class="code">id_UseRs2</text>
+  <line x1="222" y1="215" x2="330" y2="215" stroke="#495057" stroke-width="1.6"/>
+  <text x="215" y="260" text-anchor="end" class="code">id_MemWr</text>
+  <line x1="222" y1="255" x2="320" y2="255" stroke="#2f9e44" stroke-width="1.6"/>
+  <rect x="40" y="281" width="180" height="28" rx="5" fill="#fff" stroke="#495057"/>
+  <text x="130" y="300" text-anchor="middle" class="code">id_rs2 == ex_rd</text>
+  <line x1="220" y1="295" x2="330" y2="295" stroke="#495057" stroke-width="1.6"/>
+  <text x="215" y="380" text-anchor="end" class="code">ex_MemRead</text>
+  <line x1="222" y1="375" x2="610" y2="375" stroke="#495057" stroke-width="1.6"/>
+  <rect x="40" y="401" width="180" height="28" rx="5" fill="#fff" stroke="#495057"/>
+  <text x="130" y="420" text-anchor="middle" class="code">ex_rd != 0</text>
+  <line x1="220" y1="415" x2="610" y2="415" stroke="#495057" stroke-width="1.6"/>
+  <text x="215" y="485" text-anchor="end" class="code">m_redirect</text>
+  <line x1="222" y1="480" x2="720" y2="480" stroke="#e8590c" stroke-width="1.6"/>
+  <rect x="330" y="92" width="50" height="76" rx="3" fill="#fff" stroke="#d6336c" stroke-width="2"/>
+  <text x="355" y="136.0" text-anchor="middle" class="nb" style="font-size:17px;fill:#d6336c">&amp;</text>
+  <text x="355" y="184" text-anchor="middle" class="small">:26 use1</text>
+  <rect x="330" y="198" width="50" height="114" rx="3" fill="#fff" stroke="#d6336c" stroke-width="2"/>
+  <text x="355" y="261.0" text-anchor="middle" class="nb" style="font-size:17px;fill:#d6336c">&amp;</text>
+  <text x="355" y="328" text-anchor="middle" class="small">:27 use2</text>
+  <circle cx="325" cy="255" r="5" fill="#fff" stroke="#2f9e44" stroke-width="1.8"/>
+  <line x1="380" y1="130" x2="430" y2="130" stroke="#d6336c" stroke-width="1.8"/><polyline points="430,130 430,175 470,175" fill="none" stroke="#d6336c" stroke-width="1.8"/>
+  <line x1="380" y1="255" x2="430" y2="255" stroke="#d6336c" stroke-width="1.8"/><polyline points="430,255 430,215 470,215" fill="none" stroke="#d6336c" stroke-width="1.8"/>
+  <text x="396" y="124" class="small">use1</text><text x="396" y="249" class="small">use2</text>
+  <rect x="470" y="155" width="50" height="80" rx="3" fill="#fff" stroke="#d6336c" stroke-width="2"/>
+  <text x="495" y="201.0" text-anchor="middle" class="nb" style="font-size:17px;fill:#d6336c">≥1</text>
+  <polyline points="520,195 570,195 570,345 610,345" fill="none" stroke="#d6336c" stroke-width="1.8"/>
+  <rect x="610" y="325" width="50" height="110" rx="3" fill="#fff" stroke="#d6336c" stroke-width="2"/>
+  <text x="635" y="386.0" text-anchor="middle" class="nb" style="font-size:17px;fill:#d6336c">&amp;</text>
+  <text x="635" y="451" text-anchor="middle" class="small">:28 load_use</text>
+  <line x1="660" y1="380" x2="760" y2="380" stroke="#d6336c" stroke-width="2.2"/>
+  <text x="672" y="372" class="small" style="font-weight:bold;fill:#d6336c">load_use</text>
+  <polyline points="720,480 720,420 755,420" fill="none" stroke="#e8590c" stroke-width="2"/>
+  <circle cx="720" cy="480" r="3.5" fill="#e8590c"/>
+  <rect x="760" y="360" width="50" height="80" rx="3" fill="#fff" stroke="#d6336c" stroke-width="2"/>
+  <text x="785" y="406.0" text-anchor="middle" class="nb" style="font-size:17px;fill:#d6336c">&amp;</text>
+  <text x="785" y="456" text-anchor="middle" class="small">:31 stall</text>
+  <circle cx="755" cy="420" r="5" fill="#fff" stroke="#e8590c" stroke-width="1.8"/>
+  <line x1="720" y1="480" x2="860" y2="480" stroke="#e8590c" stroke-width="2.4"/>
+  <text x="560" y="500" class="small">:30 flush = m_redirect</text>
+  <polyline points="810,400 860,400" fill="none" stroke="#d6336c" stroke-width="2.4" marker-end="url(#a_pink)"/>
+  <polyline points="840,480 860,480" fill="none" stroke="#e8590c" stroke-width="2.4" marker-end="url(#a_orange)"/>
+  <rect x="862" y="352" width="318" height="92" rx="6" fill="#fff0f6" stroke="#d6336c" stroke-width="1.6"/>
+  <text x="872" y="372" class="nb" style="fill:#d6336c">stall = 1</text>
+  <text x="872" y="392" class="note">PC 保持　　　cpu_core.v:99</text>
+  <text x="872" y="411" class="note">IF/ID 保持　 cpu_core.v:111</text>
+  <text x="872" y="430" class="note">ID/EX 写气泡  cpu_core.v:196；STALLS +1</text>
+  <rect x="862" y="452" width="318" height="92" rx="6" fill="#fff4e6" stroke="#e8590c" stroke-width="1.6"/>
+  <text x="872" y="472" class="nb" style="fill:#e8590c">flush = 1</text>
+  <text x="872" y="492" class="note">PC ← m_target　cpu_core.v:97-98</text>
+  <text x="872" y="511" class="note">IF/ID、ID/EX、EX/M 写气泡</text>
+  <text x="872" y="530" class="note">cpu_core.v:107 / 196 / 334；FLUSHES +1</text>
+  <rect x="20" y="575" width="280" height="130" rx="6" fill="#fff0f6" stroke="#d6336c" stroke-width="1.6"/>
+  <text x="30" y="595" class="nb" style="fill:#d6336c">① 只查真正会读的源寄存器</text>
+  <text x="30" y="615" class="note">UseRs1/UseRs2 由 control.v 给出：</text>
+  <text x="30" y="634" class="note">lui / auipc / jal　　不读源寄存器</text>
+  <text x="30" y="653" class="note">addi / lw / jalr　　只读 rs1</text>
+  <text x="30" y="672" class="note">R 型 / 分支 / sw / qmul　都读</text>
+  <rect x="313" y="575" width="280" height="130" rx="6" fill="#ebfbee" stroke="#2f9e44" stroke-width="1.6"/>
+  <text x="323" y="595" class="nb" style="fill:#2f9e44">② store 的 rs2 不触发</text>
+  <text x="323" y="615" class="code">lw x5 ; sw x5,8(x4) → 不停</text>
+  <text x="323" y="634" class="note">　数据到 M 段才用，DiSrc 补上</text>
+  <text x="323" y="653" class="code">lw x4 ; sw x5,0(x4) → 停</text>
+  <text x="323" y="672" class="note">　地址 rs1 在 EX 段就要用</text>
+  <rect x="606" y="575" width="280" height="130" rx="6" fill="#f8f9fa" stroke="#495057" stroke-width="1.6"/>
+  <text x="616" y="595" class="nb" style="fill:#495057">③ 写 x0 的 load 不停</text>
+  <text x="616" y="615" class="note">lw x0, ... 没有结果可等，</text>
+  <text x="616" y="634" class="note">用 ex_rd != 0 排除。</text>
+  <text x="616" y="653" class="note">①②③ 只是少停几拍，</text>
+  <text x="616" y="672" class="note">去掉也不影响结果正确</text>
+  <rect x="899" y="575" width="281" height="130" rx="6" fill="#fff4e6" stroke="#e8590c" stroke-width="1.6"/>
+  <text x="909" y="595" class="nb" style="fill:#e8590c">④ 冲刷优先</text>
+  <text x="909" y="615" class="note">M 段跳转成立时 ID、EX 段的指令都在</text>
+  <text x="909" y="634" class="note">错误路径上，停顿没有意义，还会让 PC</text>
+  <text x="909" y="653" class="note">保持而跳不过去。所以 flush 时 stall</text>
+  <text x="909" y="672" class="note">清 0，STALLS 只计真正生效的停顿</text>
+</svg>

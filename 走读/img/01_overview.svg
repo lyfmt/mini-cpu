@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="712" viewBox="0 0 1200 712">
+  <style>
+    text { font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif; fill: #212529; }
+    .h  { font-size: 20px; font-weight: bold; }
+    .st { font-size: 16px; font-weight: bold; }
+    .m  { font-size: 13px; font-weight: bold; }
+    .s  { font-size: 11px; fill: #495057; }
+    .code { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; }
+    .lbl { font-size: 12px; }
+    .badge { font-size: 12px; font-weight: bold; fill: #fff; }
+    .leg { font-size: 13px; }
+  </style>
+  <defs>
+    <marker id="aB" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#1c7ed6"/></marker>
+    <marker id="aG" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#2f9e44"/></marker>
+    <marker id="aK" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#495057"/></marker>
+    <marker id="aO" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#e8590c"/></marker>
+    <marker id="aP" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#d6336c"/></marker>
+  </defs>
+  <rect width="1200" height="712" fill="#ffffff"/>
+  <text x="600" y="34" text-anchor="middle" class="h">mini-cpu 五级流水线总览（圆圈数字 = 在课程数据通路上做的扩展）</text>
+
+  <!-- stages -->
+  <g stroke="#495057" stroke-width="1.5">
+    <rect x="20"   y="60" width="170" height="340" rx="8" fill="#f8f9fa"/>
+    <rect x="232"  y="60" width="220" height="340" rx="8" fill="#f8f9fa"/>
+    <rect x="494"  y="60" width="270" height="340" rx="8" fill="#f8f9fa"/>
+    <rect x="806"  y="60" width="190" height="340" rx="8" fill="#f8f9fa"/>
+    <rect x="1038" y="60" width="142" height="340" rx="8" fill="#f8f9fa"/>
+  </g>
+  <g fill="#ced4da" stroke="#495057" stroke-width="1.2">
+    <rect x="200"  y="60" width="22" height="340"/>
+    <rect x="462"  y="60" width="22" height="340"/>
+    <rect x="774"  y="60" width="22" height="340"/>
+    <rect x="1006" y="60" width="22" height="340"/>
+  </g>
+  <g class="s" text-anchor="middle">
+    <text x="211" y="54">IF/ID</text><text x="473" y="54">ID/EX</text>
+    <text x="785" y="54">EX/M</text><text x="1017" y="54">M/WB</text>
+  </g>
+  <g class="st" text-anchor="middle">
+    <text x="105" y="86">IF 取指</text><text x="342" y="86">ID 译码</text>
+    <text x="629" y="86">EX 执行</text><text x="901" y="86">M 访存</text>
+    <text x="1109" y="86">WB 写回</text>
+  </g>
+
+  <!-- IF -->
+  <rect x="45" y="108" width="60" height="40" rx="4" fill="#fff" stroke="#495057"/>
+  <text x="75" y="133" text-anchor="middle" class="m">PC</text>
+  <text x="84" y="170" class="s code">if_pc</text>
+  <circle cx="150" cy="128" r="16" fill="#fff" stroke="#495057"/>
+  <text x="150" y="133" text-anchor="middle" class="m">+4</text>
+  <line x1="105" y1="128" x2="134" y2="128" stroke="#495057"/>
+  <rect x="38" y="196" width="134" height="58" rx="4" fill="#fff" stroke="#495057"/>
+  <text x="105" y="220" text-anchor="middle" class="m">imem 指令存储器</text>
+  <text x="105" y="240" text-anchor="middle" class="s">u_imem · 组合读出</text>
+  <line x1="75" y1="148" x2="75" y2="196" stroke="#495057" marker-end="url(#aK)"/>
+  <line x1="172" y1="225" x2="200" y2="225" stroke="#495057" marker-end="url(#aK)"/>
+
+  <!-- ID -->
+  <rect x="250" y="100" width="185" height="48" rx="4" fill="#fff" stroke="#495057"/>
+  <text x="342" y="120" text-anchor="middle" class="m">control 主控制器</text>
+  <text x="342" y="139" text-anchor="middle" class="s">u_ctrl · 一次生成全部控制信号</text>
+  <rect x="250" y="160" width="185" height="52" rx="4" fill="#fff" stroke="#495057"/>
+  <text x="342" y="182" text-anchor="middle" class="m">regfile 寄存器堆</text>
+  <text x="342" y="201" text-anchor="middle" class="s">u_rf · 两读一写 · x0 恒 0</text>
+  <rect x="250" y="224" width="185" height="42" rx="4" fill="#fff" stroke="#495057"/>
+  <text x="342" y="243" text-anchor="middle" class="m">extender 立即数扩展</text>
+  <text x="342" y="259" text-anchor="middle" class="s">u_ext · I/S/B/U/J</text>
+  <rect x="250" y="280" width="185" height="58" rx="4" fill="#fff0f6" stroke="#d6336c" stroke-width="2"/>
+  <text x="342" y="303" text-anchor="middle" class="m">hazard_unit 冒险检测</text>
+  <text x="342" y="323" text-anchor="middle" class="s">u_hzd · 产生 stall / flush</text>
+
+  <!-- EX -->
+  <rect x="510" y="100" width="238" height="40" rx="4" fill="#e7f5ff" stroke="#1c7ed6" stroke-width="1.5"/>
+  <text x="629" y="125" text-anchor="middle" class="m">forward_unit 转发单元</text>
+  <rect x="510" y="150" width="238" height="30" rx="4" fill="#e7f5ff" stroke="#1c7ed6"/>
+  <text x="629" y="170" text-anchor="middle" class="lbl">转发选择器 → ex_fwdA / ex_fwdB</text>
+  <rect x="510" y="192" width="110" height="52" rx="4" fill="#fff" stroke="#495057"/>
+  <text x="565" y="215" text-anchor="middle" class="m">ALU</text>
+  <text x="565" y="233" text-anchor="middle" class="s">u_alu</text>
+  <rect x="638" y="192" width="110" height="52" rx="4" fill="#f3f0ff" stroke="#7048e8" stroke-width="2"/>
+  <text x="693" y="215" text-anchor="middle" class="m">qmul_unit 模乘</text>
+  <text x="693" y="233" text-anchor="middle" class="s">u_qmul · 一拍出结果</text>
+  <rect x="510" y="252" width="238" height="26" rx="4" fill="#fff" stroke="#7048e8"/>
+  <text x="629" y="270" text-anchor="middle" class="lbl">结果选择器：ALUctr = QMUL 时取模乘</text>
+  <rect x="510" y="290" width="110" height="50" rx="4" fill="#e3fafc" stroke="#0c8599" stroke-width="1.5"/>
+  <text x="565" y="311" text-anchor="middle" class="m">branch_cmp</text>
+  <text x="565" y="329" text-anchor="middle" class="s">比较单元 · 6 种条件</text>
+  <rect x="638" y="290" width="110" height="50" rx="4" fill="#e3fafc" stroke="#0c8599" stroke-width="1.5"/>
+  <text x="693" y="311" text-anchor="middle" class="m">目标加法器</text>
+  <text x="693" y="329" text-anchor="middle" class="s">PC 或 rs1 ＋ imm</text>
+  <rect x="510" y="352" width="238" height="30" rx="4" fill="#ebfbee" stroke="#2f9e44" stroke-width="1.5"/>
+  <text x="629" y="372" text-anchor="middle" class="lbl">store 数据取转发之后的值 → m_busB</text>
+
+  <!-- M -->
+  <rect x="820" y="100" width="162" height="48" rx="4" fill="#fff4e6" stroke="#e8590c" stroke-width="2"/>
+  <text x="901" y="120" text-anchor="middle" class="m code">m_redirect</text>
+  <text x="901" y="139" text-anchor="middle" class="s code">Branch &amp; cond | Jump</text>
+  <rect x="820" y="160" width="162" height="44" rx="4" fill="#ebfbee" stroke="#2f9e44" stroke-width="1.5"/>
+  <text x="901" y="179" text-anchor="middle" class="m">DiSrc 选择器</text>
+  <text x="901" y="196" text-anchor="middle" class="s code">m_busB / wb_busW</text>
+  <rect x="820" y="216" width="162" height="46" rx="4" fill="#fff" stroke="#495057"/>
+  <text x="901" y="236" text-anchor="middle" class="m">dmem 数据存储器</text>
+  <text x="901" y="253" text-anchor="middle" class="s">u_dmem · 组合读、上升沿写</text>
+  <rect x="820" y="274" width="162" height="46" rx="4" fill="#fff9db" stroke="#e67700" stroke-width="1.5"/>
+  <text x="901" y="294" text-anchor="middle" class="m">io_regs I/O</text>
+  <text x="901" y="311" text-anchor="middle" class="s">u_io · FINISH / 计数器</text>
+  <text x="901" y="345" text-anchor="middle" class="s">cpu_top 按 addr[31] 选择</text>
+  <text x="901" y="362" text-anchor="middle" class="s">0 → dmem，1 → I/O</text>
+
+  <!-- WB -->
+  <rect x="1050" y="160" width="118" height="56" rx="4" fill="#fff" stroke="#495057"/>
+  <text x="1109" y="183" text-anchor="middle" class="m">MemtoReg 选择</text>
+  <text x="1109" y="203" text-anchor="middle" class="s code">→ wb_busW</text>
+
+  <!-- badges -->
+  <g>
+    <circle cx="414" cy="280" r="10" fill="#d6336c"/><text x="414" y="284" text-anchor="middle" class="badge">1</text>
+    <circle cx="437" cy="280" r="10" fill="#e8590c"/><text x="437" y="284" text-anchor="middle" class="badge">2</text>
+    <circle cx="982" cy="100" r="10" fill="#e8590c"/><text x="982" y="104" text-anchor="middle" class="badge">2</text>
+    <circle cx="748" cy="352" r="10" fill="#2f9e44"/><text x="748" y="356" text-anchor="middle" class="badge">3</text>
+    <circle cx="748" cy="192" r="10" fill="#7048e8"/><text x="748" y="196" text-anchor="middle" class="badge">4</text>
+    <circle cx="620" cy="290" r="10" fill="#0c8599"/><text x="620" y="294" text-anchor="middle" class="badge">5</text>
+    <circle cx="748" cy="290" r="10" fill="#0c8599"/><text x="748" y="294" text-anchor="middle" class="badge">5</text>
+    <circle cx="435" cy="160" r="10" fill="#495057"/><text x="435" y="164" text-anchor="middle" class="badge">6</text>
+    <circle cx="982" cy="274" r="10" fill="#e67700"/><text x="982" y="278" text-anchor="middle" class="badge">7</text>
+  </g>
+
+  <!-- register dots: flush (orange) / stall (pink) -->
+  <g>
+    <circle cx="211" cy="388" r="6" fill="#e8590c"/>
+    <circle cx="473" cy="388" r="6" fill="#e8590c"/>
+    <circle cx="785" cy="388" r="6" fill="#e8590c"/>
+    <circle cx="211" cy="370" r="6" fill="#d6336c"/>
+    <circle cx="473" cy="370" r="6" fill="#d6336c"/>
+  </g>
+
+  <!-- feedback paths -->
+  <g fill="none" stroke-width="2">
+    <polyline points="870,400 870,430 590,430 590,404" stroke="#1c7ed6" marker-end="url(#aB)"/>
+    <polyline points="1080,400 1080,460 610,460 610,404" stroke="#1c7ed6" marker-end="url(#aB)"/>
+    <polyline points="1100,400 1100,490 900,490 900,404" stroke="#2f9e44" marker-end="url(#aG)"/>
+    <polyline points="1120,400 1120,520 340,520 340,404" stroke="#495057" marker-end="url(#aK)"/>
+    <polyline points="850,400 850,550 75,550 75,404" stroke="#e8590c" marker-end="url(#aO)"/>
+    <polyline points="300,400 300,580 55,580 55,404" stroke="#d6336c" marker-end="url(#aP)"/>
+  </g>
+  <g class="lbl" text-anchor="middle">
+    <text x="730" y="424" fill="#1c7ed6">(1) EX/M 转发 10：m_aluout</text>
+    <text x="965" y="454" fill="#1c7ed6">(2) WB 转发 01：wb_busW</text>
+    <text x="1000" y="484" fill="#2f9e44">(3) DiSrc 修正 store 数据</text>
+    <text x="600" y="514" fill="#495057">(4) 写回寄存器堆（同周期读写走内部旁路）</text>
+    <text x="575" y="544" fill="#e8590c">(5) 跳转在 M 段决定：PC ← m_target，IF/ID、ID/EX、EX/M 写入气泡</text>
+    <text x="178" y="574" fill="#d6336c">(6) load-use：PC、IF/ID 保持</text>
+  </g>
+
+  <!-- legend -->
+  <rect x="20" y="600" width="1160" height="104" rx="8" fill="#f8f9fa" stroke="#dee2e6"/>
+  <g class="leg">
+    <circle cx="40" cy="622" r="9" fill="#d6336c"/><text x="40" y="626" text-anchor="middle" class="badge">1</text>
+    <text x="56" y="627">load-use 停顿：只查真正读的源寄存器，store 数据不触发（hazard_unit.v）</text>
+    <circle cx="40" cy="646" r="9" fill="#e8590c"/><text x="40" y="650" text-anchor="middle" class="badge">2</text>
+    <text x="56" y="651">跳转冲刷 3 条，冲刷优先于停顿（hazard_unit.v、cpu_core.v）</text>
+    <circle cx="40" cy="670" r="9" fill="#2f9e44"/><text x="40" y="674" text-anchor="middle" class="badge">3</text>
+    <text x="56" y="675">store 数据取转发之后的 busB，补上课程图的缺口（cpu_core.v）</text>
+    <circle cx="40" cy="694" r="9" fill="#7048e8"/><text x="40" y="698" text-anchor="middle" class="badge">4</text>
+    <text x="56" y="699">定制指令 qmul：模乘单元与 ALU 并排，一拍出结果（qmul_unit.v）</text>
+    <circle cx="610" cy="622" r="9" fill="#0c8599"/><text x="610" y="626" text-anchor="middle" class="badge">5</text>
+    <text x="626" y="627">扩展指令：比较单元给 6 种分支条件，jalr 目标基地址选 rs1（branch_cmp.v）</text>
+    <circle cx="610" cy="646" r="9" fill="#495057"/><text x="610" y="650" text-anchor="middle" class="badge">6</text>
+    <text x="626" y="651">寄存器堆内部旁路，代替"下降沿写"（regfile.v）</text>
+    <circle cx="610" cy="670" r="9" fill="#e67700"/><text x="610" y="674" text-anchor="middle" class="badge">7</text>
+    <text x="626" y="675">I/O 计数器 CYCLE / INSTRET / STALLS / FLUSHES，用来量化开销（io_regs.v）</text>
+    <circle cx="616" cy="694" r="5" fill="#e8590c"/><circle cx="632" cy="694" r="5" fill="#d6336c"/>
+    <text x="646" y="699">流水线寄存器上的点：橙 = 冲刷时写入气泡；粉 = 停顿时 IF/ID 保持、ID/EX 写入气泡</text>
+  </g>
+</svg>

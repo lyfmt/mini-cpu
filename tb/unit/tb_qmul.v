@@ -3,7 +3,7 @@
 // qmul_unit 穷举单元测试：
 //   1. 低 12 位的全部 4096 × 4096 种组合（高位为 0），与 (a·b) mod 3329 比较；
 //   2. 抽查 NRAND 组高位随机的 32 位输入，确认只取了低 12 位、输出高 20 位为 0。
-// 用 sim/run_unit.sh 运行（verilator --binary --timing；没有 verilator 时用 iverilog，慢一些）。
+// 共约 1780 万次比较，verilator（--binary --timing）明显快于 iverilog。
 module tb_qmul;
     parameter NRAND = 1000000;
 

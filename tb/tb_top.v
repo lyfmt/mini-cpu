@@ -81,7 +81,7 @@ module tb_top #(
     integer          cyc;            // 复位释放以来的周期号，与硬件 CYCLE 一致
     reg              done;
 
-    // 0 = 运行中，1 = PASS，2 = FAIL。ModelSim 批量脚本用 examine 读取它判定结果。
+    // 0 = 运行中，1 = PASS，2 = FAIL。仿真结束后可在仿真器里读取它判定结果（如 ModelSim 的 examine）。
     reg [1:0]        result_status;
 
     // 最近读入的一条期望事件

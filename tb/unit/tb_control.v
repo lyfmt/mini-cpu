@@ -1,12 +1,12 @@
 `timescale 1ns / 1ps
 
 // 主控制器穷举单元测试：opcode × funct3 × funct7 全部 2^17 种组合，
-// 与这里独立写出的 rv32i_qmul 译码表逐个字段对照：
+// 与这里独立写出的译码表（RV32I 子集 + qmul）逐个字段对照：
 //   - 合法性：非法编码必须输出全部为默认值的气泡控制信号；
 //   - 合法指令：ExtOp、ALUASrc、ALUBSrc、ALUctr、TargetSrc、BrOp、Branch、Jump、
 //     MemRead、MemWr、MemtoReg、RegWr、UseRs1、UseRs2 全部比较（"无关"的字段也按默认值比较）。
 // 参数 HAS_QMUL 传给被测的 control；为 0 时 qmul 也必须是非法编码。
-// 用 sim/run_unit.sh 运行（iverilog，两种 HAS_QMUL 各一次）。
+// HAS_QMUL 的两种取值需各运行一次。
 module tb_control;
     parameter HAS_QMUL = 1;
 

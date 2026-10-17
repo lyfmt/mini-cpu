@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="636" viewBox="0 0 1200 636">
+  <style>
+    text { font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif; fill: #212529; }
+    .h  { font-size: 19px; font-weight: bold; }
+    .sub { font-size: 13px; fill: #495057; }
+    .cyc { font-size: 13px; font-weight: bold; fill: #495057; }
+    .ins { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 13px; }
+    .pc  { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 12px; fill: #868e96; }
+    .cell { font-size: 13px; font-weight: bold; }
+    .note { font-size: 13px; }
+    .nb { font-size: 13px; font-weight: bold; }
+    .code { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 12.5px; }
+    .small { font-size: 11.5px; fill: #495057; }
+  </style>
+  <defs>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#f1f3f5"/><line x1="0" y1="0" x2="0" y2="6" stroke="#ced4da" stroke-width="2"/>
+    </pattern>
+    <marker id="a_blue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#1c7ed6"/></marker>
+    <marker id="a_green" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#2f9e44"/></marker>
+    <marker id="a_orange" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#e8590c"/></marker>
+    <marker id="a_pink" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#d6336c"/></marker>
+    <marker id="a_violet" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#7048e8"/></marker>
+    <marker id="a_gray" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#495057"/></marker>
+    <marker id="a_red" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#e03131"/></marker>
+    <marker id="a_teal" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#0c8599"/></marker>
+  </defs>
+  <rect width="1200" height="636" fill="#ffffff"/>
+  <text x="600" y="30" text-anchor="middle" class="h">load-use 停顿：lw x5,0(x4) 紧跟 add x6,x5,x1</text>
+  <text x="600" y="52" text-anchor="middle" class="sub">演示 loaduse（prebuilt/base9/demo/loaduse），每一格都取自仿真的 +PIPE 时空图；Cn = 复位释放后的第 n 拍</text>
+  <rect x="559" y="80" width="94" height="280" fill="#d6336c" fill-opacity="0.13" stroke="#d6336c" stroke-opacity="0.5" stroke-dasharray="5 3" rx="4"/>
+  <text x="318.0" y="96" text-anchor="middle" class="cyc">C13</text>
+  <text x="414.0" y="96" text-anchor="middle" class="cyc">C14</text>
+  <text x="510.0" y="96" text-anchor="middle" class="cyc">C15</text>
+  <text x="606.0" y="96" text-anchor="middle" class="cyc">C16</text>
+  <text x="702.0" y="96" text-anchor="middle" class="cyc">C17</text>
+  <text x="798.0" y="96" text-anchor="middle" class="cyc">C18</text>
+  <text x="894.0" y="96" text-anchor="middle" class="cyc">C19</text>
+  <text x="990.0" y="96" text-anchor="middle" class="cyc">C20</text>
+  <text x="1086.0" y="96" text-anchor="middle" class="cyc">C21</text>
+  <line x1="20" y1="104" x2="1134" y2="104" stroke="#e9ecef"/>
+  <text x="24" y="130.0" class="pc">0x34</text>
+  <text x="68" y="130.0" class="ins">add x0,x0,x0  (nop)</text>
+  <rect x="274" y="109" width="88" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="318.0" y="130.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="370" y="109" width="88" height="32" rx="5" fill="#fff3bf" stroke="#868e96"/>
+  <text x="414.0" y="130.0" text-anchor="middle" class="cell">ID</text>
+  <rect x="466" y="109" width="88" height="32" rx="5" fill="#d3f9d8" stroke="#868e96"/>
+  <text x="510.0" y="130.0" text-anchor="middle" class="cell">EX</text>
+  <rect x="562" y="109" width="88" height="32" rx="5" fill="#ffe8cc" stroke="#868e96"/>
+  <text x="606.0" y="130.0" text-anchor="middle" class="cell">M</text>
+  <rect x="658" y="109" width="88" height="32" rx="5" fill="#e5dbff" stroke="#868e96"/>
+  <text x="702.0" y="130.0" text-anchor="middle" class="cell">WB</text>
+  <line x1="20" y1="146" x2="1134" y2="146" stroke="#e9ecef"/>
+  <text x="24" y="172.0" class="pc">0x38</text>
+  <text x="68" y="172.0" class="ins">lw  x5, 0(x4)</text>
+  <rect x="370" y="151" width="88" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="414.0" y="172.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="466" y="151" width="88" height="32" rx="5" fill="#fff3bf" stroke="#868e96"/>
+  <text x="510.0" y="172.0" text-anchor="middle" class="cell">ID</text>
+  <rect x="562" y="151" width="88" height="32" rx="5" fill="#d3f9d8" stroke="#868e96"/>
+  <text x="606.0" y="172.0" text-anchor="middle" class="cell">EX</text>
+  <rect x="658" y="151" width="88" height="32" rx="5" fill="#ffe8cc" stroke="#868e96"/>
+  <text x="702.0" y="172.0" text-anchor="middle" class="cell">M</text>
+  <rect x="754" y="151" width="88" height="32" rx="5" fill="#e5dbff" stroke="#868e96"/>
+  <text x="798.0" y="172.0" text-anchor="middle" class="cell">WB</text>
+  <line x1="20" y1="188" x2="1134" y2="188" stroke="#e9ecef"/>
+  <text x="24" y="214.0" class="pc">0x3c</text>
+  <text x="68" y="214.0" class="ins">add x6, x5, x1</text>
+  <rect x="466" y="193" width="88" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="510.0" y="214.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="562" y="193" width="88" height="32" rx="5" fill="#fff3bf" stroke="#868e96"/>
+  <text x="606.0" y="214.0" text-anchor="middle" class="cell">ID</text>
+  <rect x="658" y="193" width="88" height="32" rx="5" fill="#fff3bf" stroke="#d6336c" stroke-width="2.2" stroke-dasharray="5 3"/>
+  <text x="702.0" y="214.0" text-anchor="middle" class="cell">ID 保持</text>
+  <rect x="754" y="193" width="88" height="32" rx="5" fill="#d3f9d8" stroke="#868e96"/>
+  <text x="798.0" y="214.0" text-anchor="middle" class="cell">EX</text>
+  <rect x="850" y="193" width="88" height="32" rx="5" fill="#ffe8cc" stroke="#868e96"/>
+  <text x="894.0" y="214.0" text-anchor="middle" class="cell">M</text>
+  <rect x="946" y="193" width="88" height="32" rx="5" fill="#e5dbff" stroke="#868e96"/>
+  <text x="990.0" y="214.0" text-anchor="middle" class="cell">WB</text>
+  <line x1="20" y1="230" x2="1134" y2="230" stroke="#e9ecef"/>
+  <text x="24" y="256.0" class="ins">（停顿插入的气泡）</text>
+  <rect x="658" y="235" width="88" height="32" rx="5" fill="url(#hatch)" stroke="#adb5bd"/>
+  <text x="702.0" y="256.0" text-anchor="middle" class="cell" fill="#868e96" style="fill:#868e96">气泡</text>
+  <rect x="754" y="235" width="88" height="32" rx="5" fill="url(#hatch)" stroke="#adb5bd"/>
+  <text x="798.0" y="256.0" text-anchor="middle" class="cell" fill="#868e96" style="fill:#868e96">气泡</text>
+  <rect x="850" y="235" width="88" height="32" rx="5" fill="url(#hatch)" stroke="#adb5bd"/>
+  <text x="894.0" y="256.0" text-anchor="middle" class="cell" fill="#868e96" style="fill:#868e96">气泡</text>
+  <line x1="20" y1="272" x2="1134" y2="272" stroke="#e9ecef"/>
+  <text x="24" y="298.0" class="pc">0x40</text>
+  <text x="68" y="298.0" class="ins">add x0,x0,x0  (nop)</text>
+  <rect x="562" y="277" width="88" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="606.0" y="298.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="658" y="277" width="88" height="32" rx="5" fill="#d0ebff" stroke="#d6336c" stroke-width="2.2" stroke-dasharray="5 3"/>
+  <text x="702.0" y="298.0" text-anchor="middle" class="cell">IF 保持</text>
+  <rect x="754" y="277" width="88" height="32" rx="5" fill="#fff3bf" stroke="#868e96"/>
+  <text x="798.0" y="298.0" text-anchor="middle" class="cell">ID</text>
+  <rect x="850" y="277" width="88" height="32" rx="5" fill="#d3f9d8" stroke="#868e96"/>
+  <text x="894.0" y="298.0" text-anchor="middle" class="cell">EX</text>
+  <rect x="946" y="277" width="88" height="32" rx="5" fill="#ffe8cc" stroke="#868e96"/>
+  <text x="990.0" y="298.0" text-anchor="middle" class="cell">M</text>
+  <rect x="1042" y="277" width="88" height="32" rx="5" fill="#e5dbff" stroke="#868e96"/>
+  <text x="1086.0" y="298.0" text-anchor="middle" class="cell">WB</text>
+  <line x1="20" y1="314" x2="1134" y2="314" stroke="#e9ecef"/>
+  <text x="24" y="340.0" class="pc">0x44</text>
+  <text x="68" y="340.0" class="ins">add x0,x0,x0  (nop)</text>
+  <rect x="754" y="319" width="88" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="798.0" y="340.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="850" y="319" width="88" height="32" rx="5" fill="#fff3bf" stroke="#868e96"/>
+  <text x="894.0" y="340.0" text-anchor="middle" class="cell">ID</text>
+  <rect x="946" y="319" width="88" height="32" rx="5" fill="#d3f9d8" stroke="#868e96"/>
+  <text x="990.0" y="340.0" text-anchor="middle" class="cell">EX</text>
+  <rect x="1042" y="319" width="88" height="32" rx="5" fill="#ffe8cc" stroke="#868e96"/>
+  <text x="1086.0" y="340.0" text-anchor="middle" class="cell">M</text>
+  <line x1="20" y1="356" x2="1134" y2="356" stroke="#e9ecef"/>
+  <text x="606" y="78" text-anchor="middle" class="nb" style="fill:#d6336c">stall = 1</text>
+  <rect x="751" y="147" width="94" height="82" rx="7" fill="none" stroke="#1c7ed6" stroke-width="3"/>
+  <text x="798.0" y="376" text-anchor="middle" class="nb" style="fill:#1c7ed6">A ← WB</text>
+  <rect x="655" y="147" width="94" height="82" rx="7" fill="none" stroke="#e03131" stroke-width="2" stroke-dasharray="4 3"/>
+  <text x="702.0" y="376" text-anchor="middle" class="nb" style="fill:#e03131">若不停?</text>
+  <rect x="20" y="394" width="372" height="98" rx="6" fill="#fff0f6" stroke="#d6336c" stroke-width="1.6"/>
+  <text x="30" y="414" class="nb" style="fill:#d6336c">① C16 检测到冲突  hazard_unit.v:26-28</text>
+  <text x="30" y="434" class="code">ex_MemRead = 1        EX 段是 lw</text>
+  <text x="30" y="453" class="code">ex_rd = x5，不是 x0</text>
+  <text x="30" y="472" class="code">id_UseRs1 = 1, id_rs1 = x5  → use1 = 1</text>
+  <rect x="408" y="394" width="380" height="98" rx="6" fill="#fff0f6" stroke="#d6336c" stroke-width="1.6"/>
+  <text x="418" y="414" class="nb" style="fill:#d6336c">② C16 的时钟沿上生效  cpu_core.v</text>
+  <text x="418" y="434" class="code">PC    : else if (!stall) 才 +4     :99</text>
+  <text x="418" y="453" class="code">IF/ID : else if (!stall) 才锁存    :111</text>
+  <text x="418" y="472" class="code">ID/EX : if (rst||flush||stall) 气泡 :196</text>
+  <rect x="804" y="394" width="376" height="98" rx="6" fill="#e7f5ff" stroke="#1c7ed6" stroke-width="1.6"/>
+  <text x="814" y="414" class="nb" style="fill:#1c7ed6">③ 停一拍后用普通 WB 转发  forward_unit.v:33</text>
+  <text x="814" y="434" class="code">C18 lw 在 WB、add 在 EX → BusAFw = 01</text>
+  <text x="814" y="453" class="code">fwdA = wb_busW = 0x12345678</text>
+  <text x="814" y="472" class="code">C20 写回 x6 = 0x12345679</text>
+  <rect x="20" y="508" width="1160" height="84" rx="6" fill="#fff5f5" stroke="#e03131" stroke-width="1.6"/>
+  <text x="30" y="528" class="nb" style="fill:#e03131">为什么非停不可</text>
+  <text x="30" y="548" class="note">C17 如果不停，add 已进 EX 要用 x5，而 lw 还在 M 段读存储器：EX/M 里的 m_aluout 只是访存地址，所以 forward_unit 用 !m_MemRead 把</text>
+  <text x="30" y="567" class="note">M 段的 load 排除在转发来源之外。停一拍让 lw 进到 M/WB，数据就能从 WB 转发过来。代价是每次 load-use 多 1 拍，STALLS 计数器 +1。</text>
+  <rect x="20" y="608" width="50" height="18" rx="4" fill="#d0ebff" stroke="#868e96"/><text x="45" y="622" text-anchor="middle" class="small" style="font-weight:bold;fill:#212529">IF</text>
+  <rect x="78" y="608" width="50" height="18" rx="4" fill="#fff3bf" stroke="#868e96"/><text x="103" y="622" text-anchor="middle" class="small" style="font-weight:bold;fill:#212529">ID</text>
+  <rect x="136" y="608" width="50" height="18" rx="4" fill="#d3f9d8" stroke="#868e96"/><text x="161" y="622" text-anchor="middle" class="small" style="font-weight:bold;fill:#212529">EX</text>
+  <rect x="194" y="608" width="50" height="18" rx="4" fill="#ffe8cc" stroke="#868e96"/><text x="219" y="622" text-anchor="middle" class="small" style="font-weight:bold;fill:#212529">M</text>
+  <rect x="252" y="608" width="50" height="18" rx="4" fill="#e5dbff" stroke="#868e96"/><text x="277" y="622" text-anchor="middle" class="small" style="font-weight:bold;fill:#212529">WB</text>
+  <rect x="318" y="608" width="50" height="18" rx="4" fill="url(#hatch)" stroke="#adb5bd"/><text x="376" y="622" class="small">气泡</text>
+  <rect x="418" y="608" width="50" height="18" rx="4" fill="#fff3bf" stroke="#d6336c" stroke-width="2" stroke-dasharray="5 3"/><text x="476" y="622" class="small">停顿保持</text>
+  <rect x="543" y="608" width="50" height="18" rx="4" fill="#d3f9d8" stroke="#e8590c" stroke-width="2"/><line x1="559" y1="611" x2="577" y2="623" stroke="#e8590c" stroke-width="2"/><line x1="577" y1="611" x2="559" y2="623" stroke="#e8590c" stroke-width="2"/><text x="601" y="622" class="small">被冲刷</text>
+</svg>

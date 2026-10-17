@@ -2,14 +2,7 @@
 `include "defines.vh"
 
 // 五级流水线：IF -> ID -> EX -> M -> WB。
-//
-// 命名约定：信号以所在的段为前缀。
-//   - 流水线寄存器的输出以"使用它的段"为前缀：IF/ID 的输出是 id_*，ID/EX 是 ex_*，
-//     EX/M 是 m_*，M/WB 是 wb_*。例如 ex_pc 就是"EX 段那条指令的 PC"。
-//   - 各段内部的组合信号用同一前缀，例如 ex_fwdA、m_redirect。
-//   - 控制信号沿用课程名字：ex_ALUctr、m_MemWr、wb_RegWr ……
-// 每个流水线寄存器装三类东西：数据、控制信号、身份信息（rd/rs1/rs2、有效位、PC、指令）。
-// 气泡 = 有效位和全部控制信号清零（其余字段也清零，波形更干净）。复位时所有流水线寄存器都是气泡。
+
 module cpu_core #(
     parameter HAS_QMUL = 1     // 1：EX 段例化模乘单元，支持 qmul；0：不例化，qmul 按非法指令处理
 ) (
@@ -191,7 +184,7 @@ module cpu_core #(
     // ==================================================================
     // ID/EX
     // ==================================================================
-    // 课程数据通路里 ID/EX 前"选控制信号还是选 0"的选择器：停顿、冲刷、复位时写入气泡
+    // 停顿、冲刷、复位时写入气泡，否则锁存 ID 段的数据和控制信号
     always @(posedge clk) begin
         if (rst || flush || stall) begin
             ex_valid     <= 1'b0;
@@ -356,8 +349,8 @@ module cpu_core #(
             m_aluout   <= ex_result;
             m_target   <= ex_target;
             m_cond     <= ex_cond;
-            // 存进 EX/M 的 store 数据取转发选择器之后的 busB（ALUBSrc 选择器之前），
-            // 否则"运算后隔一条 store"会把旧值写进存储器（设计文档第五节）
+            // store 数据取转发选择器之后、ALUBSrc 选择器之前的 busB。
+            // "运算后隔一条 store"的依赖只能在这里转发：store 到 M 段时写者已离开流水线
             m_busB     <= ex_fwdB;
             m_Branch   <= ex_Branch;
             m_Jump     <= ex_Jump;

@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="632" viewBox="0 0 1200 632">
+  <style>
+    text { font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif; fill: #212529; }
+    .h  { font-size: 19px; font-weight: bold; }
+    .sub { font-size: 13px; fill: #495057; }
+    .cyc { font-size: 13px; font-weight: bold; fill: #495057; }
+    .ins { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 13px; }
+    .pc  { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 12px; fill: #868e96; }
+    .cell { font-size: 13px; font-weight: bold; }
+    .note { font-size: 13px; }
+    .nb { font-size: 13px; font-weight: bold; }
+    .code { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 12.5px; }
+    .small { font-size: 11.5px; fill: #495057; }
+  </style>
+  <defs>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#f1f3f5"/><line x1="0" y1="0" x2="0" y2="6" stroke="#ced4da" stroke-width="2"/>
+    </pattern>
+    <marker id="a_blue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#1c7ed6"/></marker>
+    <marker id="a_green" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#2f9e44"/></marker>
+    <marker id="a_orange" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#e8590c"/></marker>
+    <marker id="a_pink" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#d6336c"/></marker>
+    <marker id="a_violet" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#7048e8"/></marker>
+    <marker id="a_gray" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#495057"/></marker>
+    <marker id="a_red" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#e03131"/></marker>
+    <marker id="a_teal" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#0c8599"/></marker>
+  </defs>
+  <rect width="1200" height="632" fill="#ffffff"/>
+  <text x="600" y="30" text-anchor="middle" class="h">EX 段细节（cpu_core.v:241-328）：所有用到 rs1/rs2 的地方都接转发之后的值</text>
+  <text x="600" y="52" text-anchor="middle" class="sub">蓝 = 转发，紫 = 定制指令，青 = 扩展指令用的比较单元与目标加法器，绿 = store 数据</text>
+  <rect x="20" y="70" width="24" height="540" fill="#ced4da" stroke="#495057"/>
+  <text x="32" y="66" text-anchor="middle" class="small">ID/EX</text>
+  <rect x="1100" y="70" width="24" height="540" fill="#ced4da" stroke="#495057"/>
+  <text x="1112" y="66" text-anchor="middle" class="small">EX/M</text>
+  <polygon points="190,78 224,96.0 224,160.0 190,178" fill="#e7f5ff" stroke="#1c7ed6" stroke-width="1.8"/>
+  <polygon points="190,238 224,256.0 224,320.0 190,338" fill="#e7f5ff" stroke="#1c7ed6" stroke-width="1.8"/>
+  <polyline points="44,96 190,96" fill="none" stroke="#495057" stroke-width="1.8"/>
+  <text x="52" y="91" text-anchor="start" class="code">ex_busA   00</text>
+  <polyline points="52,128 190,128" fill="none" stroke="#1c7ed6" stroke-width="1.8"/>
+  <text x="52" y="123" text-anchor="start" class="code" style="fill:#1c7ed6">wb_busW   01</text>
+  <polyline points="52,160 190,160" fill="none" stroke="#1c7ed6" stroke-width="1.8"/>
+  <text x="52" y="155" text-anchor="start" class="code" style="fill:#1c7ed6">m_aluout  10</text>
+  <polyline points="44,256 190,256" fill="none" stroke="#495057" stroke-width="1.8"/>
+  <text x="52" y="251" text-anchor="start" class="code">ex_busB   00</text>
+  <polyline points="52,288 190,288" fill="none" stroke="#1c7ed6" stroke-width="1.8"/>
+  <text x="52" y="283" text-anchor="start" class="code" style="fill:#1c7ed6">wb_busW   01</text>
+  <polyline points="52,320 190,320" fill="none" stroke="#1c7ed6" stroke-width="1.8"/>
+  <text x="52" y="315" text-anchor="start" class="code" style="fill:#1c7ed6">m_aluout  10</text>
+  <rect x="96" y="192" width="120" height="34" rx="4" fill="#e7f5ff" stroke="#1c7ed6" stroke-width="1.6"/>
+  <text x="156" y="214" text-anchor="middle" class="code">forward_unit</text>
+  <polyline points="207,192 207,170" fill="none" stroke="#1c7ed6" stroke-width="1.6"/>
+  <polyline points="207,226 207,246" fill="none" stroke="#1c7ed6" stroke-width="1.6"/>
+  <text x="193" y="186" text-anchor="end" class="small">BusAFw</text>
+  <text x="193" y="242" text-anchor="end" class="small">BusBFw</text>
+  <polyline points="224,128 236,128 236,114 330,114" fill="none" stroke="#1c7ed6" stroke-width="2"/>
+  <circle cx="236" cy="128" r="3.5" fill="#1c7ed6"/>
+  <polyline points="224,288 244,288 244,254 330,254" fill="none" stroke="#1c7ed6" stroke-width="2"/>
+  <circle cx="244" cy="288" r="3.5" fill="#1c7ed6"/>
+  <text x="256" y="108" text-anchor="start" class="code" style="fill:#1c7ed6">ex_fwdA</text>
+  <text x="256" y="248" text-anchor="start" class="code" style="fill:#1c7ed6">ex_fwdB</text>
+  <polygon points="330,96 360,110.4 360,161.6 330,176" fill="#fff" stroke="#495057" stroke-width="1.8"/>
+  <text x="345" y="192" text-anchor="middle" class="small">ALUASrc</text>
+  <polyline points="300,158 330,158" fill="none" stroke="#495057" stroke-width="1.8"/>
+  <text x="296" y="162" text-anchor="end" class="code">ex_pc</text>
+  <polygon points="330,236 360,255.8 360,326.2 330,346" fill="#fff" stroke="#495057" stroke-width="1.8"/>
+  <text x="345" y="362" text-anchor="middle" class="small">ALUBSrc</text>
+  <polyline points="300,290 330,290" fill="none" stroke="#495057" stroke-width="1.8"/>
+  <text x="296" y="294" text-anchor="end" class="code">ex_imm</text>
+  <polyline points="300,326 330,326" fill="none" stroke="#495057" stroke-width="1.8"/>
+  <text x="296" y="330" text-anchor="end" class="code">32'd4</text>
+  <rect x="400" y="100" width="90" height="100" rx="5" fill="#fff" stroke="#495057" stroke-width="1.8"/>
+  <text x="445" y="146" text-anchor="middle" class="nb">ALU</text>
+  <text x="445" y="166" text-anchor="middle" class="small">u_alu</text>
+  <rect x="400" y="232" width="90" height="90" rx="5" fill="#f3f0ff" stroke="#7048e8" stroke-width="2.2"/>
+  <text x="445" y="272" text-anchor="middle" class="code" style="fill:#7048e8">qmul_unit</text>
+  <text x="445" y="292" text-anchor="middle" class="small">u_qmul</text>
+  <polyline points="360,136 400,136" fill="none" stroke="#495057" stroke-width="2"/>
+  <circle cx="372" cy="136" r="3.5" fill="#495057"/>
+  <polyline points="372,136 372,250 400,250" fill="none" stroke="#7048e8" stroke-width="2"/>
+  <polyline points="360,291 400,291" fill="none" stroke="#7048e8" stroke-width="2"/>
+  <circle cx="380" cy="291" r="3.5" fill="#495057"/>
+  <polyline points="380,291 380,180 400,180" fill="none" stroke="#495057" stroke-width="2"/>
+  <text x="376" y="130" text-anchor="start" class="small">a</text>
+  <text x="386" y="176" text-anchor="start" class="small">b</text>
+  <polygon points="540,140 570,168.8 570,271.2 540,300" fill="#f3f0ff" stroke="#7048e8" stroke-width="1.8"/>
+  <polyline points="490,150 515,150 515,165 540,165" fill="none" stroke="#495057" stroke-width="2"/>
+  <polyline points="490,277 540,277" fill="none" stroke="#7048e8" stroke-width="2"/>
+  <text x="555" y="318" text-anchor="middle" class="small">ALUctr == QMUL</text>
+  <polyline points="570,220 1100,220" fill="none" stroke="#212529" stroke-width="2.2" marker-end="url(#a_gray)"/>
+  <text x="578" y="213" text-anchor="start" class="code">ex_result</text>
+  <rect x="400" y="388" width="120" height="64" rx="5" fill="#e3fafc" stroke="#0c8599" stroke-width="2"/>
+  <text x="460" y="414" text-anchor="middle" class="code" style="fill:#0c8599">branch_cmp</text>
+  <text x="460" y="434" text-anchor="middle" class="small">按 BrOp 给 cond</text>
+  <polyline points="236,128 236,405 400,405" fill="none" stroke="#1c7ed6" stroke-width="2"/>
+  <polyline points="244,288 244,435 400,435" fill="none" stroke="#1c7ed6" stroke-width="2"/>
+  <polyline points="520,420 1100,420" fill="none" stroke="#0c8599" stroke-width="2.2" marker-end="url(#a_teal)"/>
+  <text x="528" y="413" text-anchor="start" class="code">ex_cond</text>
+  <polyline points="244,435 244,480 1100,480" fill="none" stroke="#2f9e44" stroke-width="2.6" marker-end="url(#a_green)"/>
+  <circle cx="244" cy="435" r="3.5" fill="#1c7ed6"/>
+  <text x="256" y="473" text-anchor="start" class="code" style="fill:#2f9e44">ex_fwdB（ALUBSrc 选择之前）</text>
+  <polygon points="330,510 360,524.4 360,575.6 330,590" fill="#e3fafc" stroke="#0c8599" stroke-width="1.8"/>
+  <text x="345" y="606" text-anchor="middle" class="small">TargetSrc</text>
+  <polyline points="300,530 330,530" fill="none" stroke="#495057" stroke-width="1.8"/>
+  <text x="296" y="534" text-anchor="end" class="code">ex_pc</text>
+  <polyline points="236,405 236,570 330,570" fill="none" stroke="#1c7ed6" stroke-width="2"/>
+  <circle cx="236" cy="405" r="3.5" fill="#1c7ed6"/>
+  <circle cx="420" cy="550" r="17" fill="#e3fafc" stroke="#0c8599" stroke-width="2"/>
+  <text x="420" y="556" text-anchor="middle" class="nb">+</text>
+  <polyline points="360,550 403,550" fill="none" stroke="#0c8599" stroke-width="2"/>
+  <polyline points="420,516 420,533" fill="none" stroke="#495057" stroke-width="1.8"/>
+  <text x="420" y="511" text-anchor="middle" class="code">ex_imm</text>
+  <rect x="462" y="535" width="54" height="30" rx="4" fill="#fff" stroke="#0c8599" stroke-width="1.6"/>
+  <text x="489" y="555" text-anchor="middle" class="code">&amp;~1</text>
+  <polyline points="437,550 462,550" fill="none" stroke="#0c8599" stroke-width="2"/>
+  <polyline points="516,550 1100,550" fill="none" stroke="#0c8599" stroke-width="2.2" marker-end="url(#a_teal)"/>
+  <text x="528" y="543" text-anchor="start" class="code">ex_target</text>
+  <text x="1130" y="224" text-anchor="start" class="code" style="fill:#212529">m_aluout</text>
+  <text x="1130" y="424" text-anchor="start" class="code" style="fill:#0c8599">m_cond</text>
+  <text x="1130" y="484" text-anchor="start" class="code" style="fill:#2f9e44">m_busB</text>
+  <text x="1130" y="554" text-anchor="start" class="code" style="fill:#0c8599">m_target</text>
+  <rect x="612" y="66" width="470" height="98" rx="6" fill="#e7f5ff" stroke="#1c7ed6" stroke-width="1.6"/>
+  <text x="622" y="86" class="nb" style="fill:#1c7ed6">转发选择器  cpu_core.v:264-275</text>
+  <text x="622" y="106" class="note">00 ID 段读出值 · 01 WB 写回值 wb_busW · 10 EX/M 的 m_aluout</text>
+  <text x="622" y="125" class="note">选择信号来自 forward_unit.v:33-36（M 段优先）。fwdA/fwdB 同时送</text>
+  <text x="622" y="144" class="note">ALU、模乘单元、比较单元、jalr 基地址和 store 数据</text>
+  <rect x="612" y="234" width="470" height="112" rx="6" fill="#f3f0ff" stroke="#7048e8" stroke-width="1.6"/>
+  <text x="622" y="254" class="nb" style="fill:#7048e8">④ 模乘单元与 ALU 并排  cpu_core.v:297-313</text>
+  <text x="622" y="274" class="note">输入就是 ALU 两端 ex_alu_a / ex_alu_b（qmul 的 A 端选 rs1、B 端选 rs2）</text>
+  <text x="622" y="293" class="note">结果选择器 :313：ALUctr == QMUL 时取模乘输出，否则取 ALU</text>
+  <text x="622" y="312" class="note">之后存进 m_aluout，转发、写回都和 add 完全一样，冒险逻辑没改</text>
+  <text x="622" y="331" class="note">HAS_QMUL = 0 时走 g_no_qmul 分支，ex_qmul_y 恒 0</text>
+  <rect x="612" y="350" width="470" height="58" rx="6" fill="#e3fafc" stroke="#0c8599" stroke-width="1.6"/>
+  <text x="622" y="370" class="nb" style="fill:#0c8599">⑤ 比较单元  cpu_core.v:315-323，branch_cmp.v</text>
+  <text x="622" y="390" class="note">用转发后的 rs1/rs2，按 BrOp（= funct3）给出 6 种分支条件</text>
+  <rect x="612" y="432" width="470" height="40" rx="6" fill="#ebfbee" stroke="#2f9e44" stroke-width="1.6"/>
+  <text x="622" y="452" class="nb" style="fill:#2f9e44">③ m_busB &lt;= ex_fwdB  cpu_core.v:361（见图 06）</text>
+  <rect x="612" y="562" width="470" height="58" rx="6" fill="#e3fafc" stroke="#0c8599" stroke-width="1.6"/>
+  <text x="622" y="582" class="nb" style="fill:#0c8599">⑤ 目标加法器  cpu_core.v:325-328</text>
+  <text x="622" y="602" class="note">TargetSrc 选 PC（分支、jal）或转发后的 rs1（jalr），结果最低位清零</text>
+</svg>

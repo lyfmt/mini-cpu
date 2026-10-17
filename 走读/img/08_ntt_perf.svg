@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="394" viewBox="0 0 1200 394">
+  <style>
+    text { font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif; fill: #212529; }
+    .h  { font-size: 19px; font-weight: bold; }
+    .sub { font-size: 13px; fill: #495057; }
+    .cyc { font-size: 13px; font-weight: bold; fill: #495057; }
+    .ins { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 13px; }
+    .pc  { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 12px; fill: #868e96; }
+    .cell { font-size: 13px; font-weight: bold; }
+    .note { font-size: 13px; }
+    .nb { font-size: 13px; font-weight: bold; }
+    .code { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 12.5px; }
+    .small { font-size: 11.5px; fill: #495057; }
+  </style>
+  <defs>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#f1f3f5"/><line x1="0" y1="0" x2="0" y2="6" stroke="#ced4da" stroke-width="2"/>
+    </pattern>
+    <marker id="a_blue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#1c7ed6"/></marker>
+    <marker id="a_green" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#2f9e44"/></marker>
+    <marker id="a_orange" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#e8590c"/></marker>
+    <marker id="a_pink" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#d6336c"/></marker>
+    <marker id="a_violet" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#7048e8"/></marker>
+    <marker id="a_gray" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#495057"/></marker>
+    <marker id="a_red" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#e03131"/></marker>
+    <marker id="a_teal" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#0c8599"/></marker>
+  </defs>
+  <rect width="1200" height="394" fill="#ffffff"/>
+  <text x="600" y="30" text-anchor="middle" class="h">qmul 的收益：Kyber 正向 NTT（MARK 2 − MARK 1，来自仿真的计数器）</text>
+  <text x="600" y="52" text-anchor="middle" class="sub">两个程序只差模乘这一处：ntt_sw 调用软件模乘子程序，ntt_qmul 直接用 qmul；循环结构、模加模减、ζ 表完全相同</text>
+  <text x="188" y="110" text-anchor="end" class="nb">周期 CYCLE</text>
+  <rect x="200" y="86" width="800.0" height="22" fill="#adb5bd"/>
+  <text x="1008.0" y="103" text-anchor="start" class="code">ntt_sw   215,602</text>
+  <rect x="200" y="114" width="72.7" height="22" fill="#7048e8"/>
+  <text x="280.72659808350573" y="131" text-anchor="start" class="code" style="fill:#7048e8">ntt_qmul 19,600</text>
+  <text x="1185" y="118" text-anchor="end" class="nb" style="fill:#7048e8">11.0 倍</text>
+  <text x="188" y="188" text-anchor="end" class="nb">退休指令 INSTRET</text>
+  <rect x="200" y="164" width="563.9" height="22" fill="#adb5bd"/>
+  <text x="771.8760308345934" y="181" text-anchor="start" class="code">ntt_sw   151,966</text>
+  <rect x="200" y="192" width="62.8" height="22" fill="#7048e8"/>
+  <text x="270.7637962542091" y="209" text-anchor="start" class="code" style="fill:#7048e8">ntt_qmul 16,915</text>
+  <text x="1185" y="196" text-anchor="end" class="nb" style="fill:#7048e8">9.0 倍</text>
+  <text x="188" y="266" text-anchor="end" class="nb">冲刷 FLUSHES</text>
+  <rect x="200" y="242" width="78.7" height="22" fill="#adb5bd"/>
+  <text x="286.7079897218022" y="259" text-anchor="start" class="code">ntt_sw   21,212</text>
+  <rect x="200" y="270" width="3.3" height="22" fill="#7048e8"/>
+  <text x="211.32093394309885" y="287" text-anchor="start" class="code" style="fill:#7048e8">ntt_qmul 895</text>
+  <text x="1185" y="274" text-anchor="end" class="nb" style="fill:#7048e8">23.7 倍</text>
+  <rect x="20" y="320" width="1160" height="62" rx="6" fill="#f8f9fa" stroke="#495057" stroke-width="1.6"/>
+  <text x="30" y="340" class="note">CPI：ntt_sw 215602 / 151966 ≈ 1.42，ntt_qmul 19600 / 16915 ≈ 1.16。软件模乘的移位加法循环里分支很多，每次跳转成立都要冲刷 3 拍；</text>
+  <text x="30" y="359" class="note">qmul 同时减少了指令数和冲刷次数。两个程序 STALLS 都是 0。查看方法：上机指南第 5 节，看 ModelSim 控制台的 MARK 行。</text>
+</svg>

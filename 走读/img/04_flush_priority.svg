@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620">
+  <style>
+    text { font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif; fill: #212529; }
+    .h  { font-size: 19px; font-weight: bold; }
+    .sub { font-size: 13px; fill: #495057; }
+    .cyc { font-size: 13px; font-weight: bold; fill: #495057; }
+    .ins { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 13px; }
+    .pc  { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 12px; fill: #868e96; }
+    .cell { font-size: 13px; font-weight: bold; }
+    .note { font-size: 13px; }
+    .nb { font-size: 13px; font-weight: bold; }
+    .code { font-family: Consolas, 'Microsoft YaHei', 'Noto Sans Mono CJK SC', monospace; font-size: 12.5px; }
+    .small { font-size: 11.5px; fill: #495057; }
+  </style>
+  <defs>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#f1f3f5"/><line x1="0" y1="0" x2="0" y2="6" stroke="#ced4da" stroke-width="2"/>
+    </pattern>
+    <marker id="a_blue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#1c7ed6"/></marker>
+    <marker id="a_green" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#2f9e44"/></marker>
+    <marker id="a_orange" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#e8590c"/></marker>
+    <marker id="a_pink" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#d6336c"/></marker>
+    <marker id="a_violet" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#7048e8"/></marker>
+    <marker id="a_gray" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#495057"/></marker>
+    <marker id="a_red" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#e03131"/></marker>
+    <marker id="a_teal" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#0c8599"/></marker>
+  </defs>
+  <rect width="1200" height="620" fill="#ffffff"/>
+  <text x="600" y="30" text-anchor="middle" class="h">跳转冲刷与"冲刷优先"：beq 成立，错误路径上恰好有一对 load-use</text>
+  <text x="600" y="52" text-anchor="middle" class="sub">冒险测试 flush_stall（prebuilt/base9/hazard/flush_stall），每一格取自仿真的 +PIPE 时空图</text>
+  <rect x="559" y="80" width="94" height="238" fill="#e8590c" fill-opacity="0.13" stroke="#e8590c" stroke-opacity="0.5" stroke-dasharray="5 3" rx="4"/>
+  <text x="318.0" y="96" text-anchor="middle" class="cyc">C24</text>
+  <text x="414.0" y="96" text-anchor="middle" class="cyc">C25</text>
+  <text x="510.0" y="96" text-anchor="middle" class="cyc">C26</text>
+  <text x="606.0" y="96" text-anchor="middle" class="cyc">C27</text>
+  <text x="702.0" y="96" text-anchor="middle" class="cyc">C28</text>
+  <text x="798.0" y="96" text-anchor="middle" class="cyc">C29</text>
+  <text x="894.0" y="96" text-anchor="middle" class="cyc">C30</text>
+  <text x="990.0" y="96" text-anchor="middle" class="cyc">C31</text>
+  <text x="1086.0" y="96" text-anchor="middle" class="cyc">C32</text>
+  <line x1="20" y1="104" x2="1134" y2="104" stroke="#e9ecef"/>
+  <text x="24" y="130.0" class="pc">0x60</text>
+  <text x="68" y="130.0" class="ins">beq x0, x0, 0x70</text>
+  <rect x="274" y="109" width="88" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="318.0" y="130.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="370" y="109" width="88" height="32" rx="5" fill="#fff3bf" stroke="#868e96"/>
+  <text x="414.0" y="130.0" text-anchor="middle" class="cell">ID</text>
+  <rect x="466" y="109" width="88" height="32" rx="5" fill="#d3f9d8" stroke="#868e96"/>
+  <text x="510.0" y="130.0" text-anchor="middle" class="cell">EX</text>
+  <rect x="562" y="109" width="88" height="32" rx="5" fill="#ffe8cc" stroke="#868e96"/>
+  <text x="606.0" y="130.0" text-anchor="middle" class="cell">M</text>
+  <rect x="658" y="109" width="88" height="32" rx="5" fill="#e5dbff" stroke="#868e96"/>
+  <text x="702.0" y="130.0" text-anchor="middle" class="cell">WB</text>
+  <line x1="20" y1="146" x2="1134" y2="146" stroke="#e9ecef"/>
+  <text x="24" y="172.0" class="pc">0x64</text>
+  <text x="68" y="172.0" class="ins">lw  x1, 0(x17)</text>
+  <rect x="370" y="151" width="88" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="414.0" y="172.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="466" y="151" width="88" height="32" rx="5" fill="#fff3bf" stroke="#868e96"/>
+  <text x="510.0" y="172.0" text-anchor="middle" class="cell">ID</text>
+  <rect x="562" y="151" width="88" height="32" rx="5" fill="#d3f9d8" stroke="#e8590c" stroke-width="2"/>
+  <text x="606.0" y="172.0" text-anchor="middle" class="cell">EX</text>
+  <line x1="568" y1="157" x2="644" y2="177" stroke="#e8590c" stroke-width="2.5"/>
+  <line x1="644" y1="157" x2="568" y2="177" stroke="#e8590c" stroke-width="2.5"/>
+  <rect x="658" y="151" width="88" height="32" rx="5" fill="url(#hatch)" stroke="#adb5bd"/>
+  <text x="702.0" y="172.0" text-anchor="middle" class="cell" fill="#868e96" style="fill:#868e96">气泡</text>
+  <rect x="754" y="151" width="88" height="32" rx="5" fill="url(#hatch)" stroke="#adb5bd"/>
+  <text x="798.0" y="172.0" text-anchor="middle" class="cell" fill="#868e96" style="fill:#868e96">气泡</text>
+  <line x1="20" y1="188" x2="1134" y2="188" stroke="#e9ecef"/>
+  <text x="24" y="214.0" class="pc">0x68</text>
+  <text x="68" y="214.0" class="ins">add x2, x1, x1</text>
+  <rect x="466" y="193" width="88" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="510.0" y="214.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="562" y="193" width="88" height="32" rx="5" fill="#fff3bf" stroke="#e8590c" stroke-width="2"/>
+  <text x="606.0" y="214.0" text-anchor="middle" class="cell">ID</text>
+  <line x1="568" y1="199" x2="644" y2="219" stroke="#e8590c" stroke-width="2.5"/>
+  <line x1="644" y1="199" x2="568" y2="219" stroke="#e8590c" stroke-width="2.5"/>
+  <rect x="658" y="193" width="88" height="32" rx="5" fill="url(#hatch)" stroke="#adb5bd"/>
+  <text x="702.0" y="214.0" text-anchor="middle" class="cell" fill="#868e96" style="fill:#868e96">气泡</text>
+  <rect x="754" y="193" width="88" height="32" rx="5" fill="url(#hatch)" stroke="#adb5bd"/>
+  <text x="798.0" y="214.0" text-anchor="middle" class="cell" fill="#868e96" style="fill:#868e96">气泡</text>
+  <rect x="850" y="193" width="88" height="32" rx="5" fill="url(#hatch)" stroke="#adb5bd"/>
+  <text x="894.0" y="214.0" text-anchor="middle" class="cell" fill="#868e96" style="fill:#868e96">气泡</text>
+  <line x1="20" y1="230" x2="1134" y2="230" stroke="#e9ecef"/>
+  <text x="24" y="256.0" class="pc">0x6c</text>
+  <text x="68" y="256.0" class="ins">ori x3, x0, 3</text>
+  <rect x="562" y="235" width="88" height="32" rx="5" fill="#d0ebff" stroke="#e8590c" stroke-width="2"/>
+  <text x="606.0" y="256.0" text-anchor="middle" class="cell">IF</text>
+  <line x1="568" y1="241" x2="644" y2="261" stroke="#e8590c" stroke-width="2.5"/>
+  <line x1="644" y1="241" x2="568" y2="261" stroke="#e8590c" stroke-width="2.5"/>
+  <rect x="658" y="235" width="88" height="32" rx="5" fill="url(#hatch)" stroke="#adb5bd"/>
+  <text x="702.0" y="256.0" text-anchor="middle" class="cell" fill="#868e96" style="fill:#868e96">气泡</text>
+  <rect x="754" y="235" width="88" height="32" rx="5" fill="url(#hatch)" stroke="#adb5bd"/>
+  <text x="798.0" y="256.0" text-anchor="middle" class="cell" fill="#868e96" style="fill:#868e96">气泡</text>
+  <rect x="850" y="235" width="88" height="32" rx="5" fill="url(#hatch)" stroke="#adb5bd"/>
+  <text x="894.0" y="256.0" text-anchor="middle" class="cell" fill="#868e96" style="fill:#868e96">气泡</text>
+  <rect x="946" y="235" width="88" height="32" rx="5" fill="url(#hatch)" stroke="#adb5bd"/>
+  <text x="990.0" y="256.0" text-anchor="middle" class="cell" fill="#868e96" style="fill:#868e96">气泡</text>
+  <line x1="20" y1="272" x2="1134" y2="272" stroke="#e9ecef"/>
+  <text x="24" y="298.0" class="pc">0x70</text>
+  <text x="68" y="298.0" class="ins">add x20,x20,x21 目标</text>
+  <rect x="658" y="277" width="88" height="32" rx="5" fill="#d0ebff" stroke="#868e96"/>
+  <text x="702.0" y="298.0" text-anchor="middle" class="cell">IF</text>
+  <rect x="754" y="277" width="88" height="32" rx="5" fill="#fff3bf" stroke="#868e96"/>
+  <text x="798.0" y="298.0" text-anchor="middle" class="cell">ID</text>
+  <rect x="850" y="277" width="88" height="32" rx="5" fill="#d3f9d8" stroke="#868e96"/>
+  <text x="894.0" y="298.0" text-anchor="middle" class="cell">EX</text>
+  <rect x="946" y="277" width="88" height="32" rx="5" fill="#ffe8cc" stroke="#868e96"/>
+  <text x="990.0" y="298.0" text-anchor="middle" class="cell">M</text>
+  <rect x="1042" y="277" width="88" height="32" rx="5" fill="#e5dbff" stroke="#868e96"/>
+  <text x="1086.0" y="298.0" text-anchor="middle" class="cell">WB</text>
+  <line x1="20" y1="314" x2="1134" y2="314" stroke="#e9ecef"/>
+  <text x="606" y="78" text-anchor="middle" class="nb" style="fill:#e8590c">flush = 1</text>
+  <rect x="559" y="147" width="94" height="82" rx="7" fill="none" stroke="#d6336c" stroke-width="2.5" stroke-dasharray="5 3"/>
+  <text x="606.0" y="334" text-anchor="middle" class="nb" style="fill:#d6336c">load_use = 1</text>
+  <text x="606.0" y="352" text-anchor="middle" class="nb" style="fill:#d6336c">stall = 0</text>
+  <polyline points="650,125.0 654,125.0 654,293.0 659,293.0" fill="none" stroke="#e8590c" stroke-width="2.4" marker-end="url(#a_orange)"/>
+  <text x="802" y="130.0" class="nb" style="fill:#e8590c">PC ← m_target = 0x70</text>
+  <rect x="20" y="370" width="575" height="98" rx="6" fill="#fff4e6" stroke="#e8590c" stroke-width="1.6"/>
+  <text x="30" y="390" class="nb" style="fill:#e8590c">① C27：beq 在 M 段确认跳转</text>
+  <text x="30" y="410" class="code">m_redirect = (m_Branch &amp; m_cond) | m_Jump      cpu_core.v:375</text>
+  <text x="30" y="429" class="note">目标 0x70 早在 EX 段由目标加法器算好，存在 EX/M 的 m_target 里</text>
+  <text x="30" y="448" class="note">（:328、:357）。M 段的选择信号全部来自寄存器，时序宽松。</text>
+  <rect x="605" y="370" width="575" height="98" rx="6" fill="#fff4e6" stroke="#e8590c" stroke-width="1.6"/>
+  <text x="615" y="390" class="nb" style="fill:#e8590c">② C27 的时钟沿上生效</text>
+  <text x="615" y="410" class="note">PC ← 0x70　　　　　　　　　　　　　　　　cpu_core.v:97-98</text>
+  <text x="615" y="429" class="note">IF/ID、ID/EX、EX/M 写气泡　　　　　　cpu_core.v:107 / 196 / 334</text>
+  <text x="615" y="448" class="note">M/WB 不冲刷：beq 本身照常在 C28 退休</text>
+  <rect x="20" y="480" width="575" height="98" rx="6" fill="#fff0f6" stroke="#d6336c" stroke-width="1.6"/>
+  <text x="30" y="500" class="nb" style="fill:#d6336c">③ 同一拍也检测到 load-use，冲刷优先</text>
+  <text x="30" y="520" class="note">lw x1 在 EX、add x2,x1,x1 在 ID，load_use = 1；</text>
+  <text x="30" y="539" class="code">stall = load_use &amp; ~flush = 0                  hazard_unit.v:31</text>
+  <text x="30" y="558" class="note">如果让停顿优先，PC 会停在 0x6c，这次跳转就丢了。</text>
+  <rect x="605" y="480" width="575" height="98" rx="6" fill="#f8f9fa" stroke="#495057" stroke-width="1.6"/>
+  <text x="615" y="500" class="nb" style="fill:#495057">④ 代价与安全性</text>
+  <text x="615" y="520" class="note">C29、C30、C31 三拍 WB 没有指令退休：每次跳转成立损失 3 拍；</text>
+  <text x="615" y="539" class="note">不跳转没有任何代价（相当于静态预测"不跳"）。被冲刷的指令最远</text>
+  <text x="615" y="558" class="note">只走到 EX，还没写存储器（M）和寄存器（WB），作废是安全的。</text>
+  <rect x="20" y="592" width="50" height="18" rx="4" fill="#d0ebff" stroke="#868e96"/><text x="45" y="606" text-anchor="middle" class="small" style="font-weight:bold;fill:#212529">IF</text>
+  <rect x="78" y="592" width="50" height="18" rx="4" fill="#fff3bf" stroke="#868e96"/><text x="103" y="606" text-anchor="middle" class="small" style="font-weight:bold;fill:#212529">ID</text>
+  <rect x="136" y="592" width="50" height="18" rx="4" fill="#d3f9d8" stroke="#868e96"/><text x="161" y="606" text-anchor="middle" class="small" style="font-weight:bold;fill:#212529">EX</text>
+  <rect x="194" y="592" width="50" height="18" rx="4" fill="#ffe8cc" stroke="#868e96"/><text x="219" y="606" text-anchor="middle" class="small" style="font-weight:bold;fill:#212529">M</text>
+  <rect x="252" y="592" width="50" height="18" rx="4" fill="#e5dbff" stroke="#868e96"/><text x="277" y="606" text-anchor="middle" class="small" style="font-weight:bold;fill:#212529">WB</text>
+  <rect x="318" y="592" width="50" height="18" rx="4" fill="url(#hatch)" stroke="#adb5bd"/><text x="376" y="606" class="small">气泡</text>
+  <rect x="418" y="592" width="50" height="18" rx="4" fill="#fff3bf" stroke="#d6336c" stroke-width="2" stroke-dasharray="5 3"/><text x="476" y="606" class="small">停顿保持</text>
+  <rect x="543" y="592" width="50" height="18" rx="4" fill="#d3f9d8" stroke="#e8590c" stroke-width="2"/><line x1="559" y1="595" x2="577" y2="607" stroke="#e8590c" stroke-width="2"/><line x1="577" y1="595" x2="559" y2="607" stroke="#e8590c" stroke-width="2"/><text x="601" y="606" class="small">被冲刷</text>
+</svg>

@@ -2,8 +2,9 @@
 `include "defines.vh"
 
 // 主控制器：ID 段一次生成这条指令在后面各段要用的全部控制信号。
-// 不在 rv32i_qmul 范围内的指令（字节/半字访存、fence、ecall/ebreak、CSR、custom-0 里 qmul
-// 以外的编码、funct7 不合法的 R 型、第 25 位非 0 的移位立即数……）输出全 0，即气泡的控制信号
+// 支持 RV32I 的运算、lui/auipc、lw/sw、条件分支、jal/jalr，以及定制指令 qmul。
+// 其余编码（字节/半字访存、fence、ecall/ebreak、CSR、custom-0 里 qmul 以外的编码、
+// funct7 不合法的 R 型、第 25 位非 0 的移位立即数……）输出全 0，即气泡的控制信号
 // （不写寄存器、不读写存储器、不改 PC）。HAS_QMUL = 0 时 qmul 本身也按非法指令处理。
 module control #(
     parameter HAS_QMUL = 1

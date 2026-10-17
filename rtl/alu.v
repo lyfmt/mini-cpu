@@ -24,7 +24,7 @@ module alu (
             `ALU_SRA:   y = $signed(a) >>> shamt;
             `ALU_OR:    y = a | b;
             `ALU_AND:   y = a & b;
-            `ALU_PASSB: y = b;  // lui：结果就是 B 端的立即数，A 端选择器因此保持两路
+            `ALU_PASSB: y = b;  // lui：结果直接取 B 端的立即数，A 端无需提供常数 0
             default:    y = 32'b0;
         endcase
     end

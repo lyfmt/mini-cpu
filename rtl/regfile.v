@@ -2,7 +2,7 @@
 
 // 寄存器堆：两读一写。x0 恒读 0，写 x0 被忽略。
 // 同周期写和读同一个寄存器时，读端口直接输出即将写入的值（内部旁路），
-// 这样所有寄存器都只用上升沿，不必靠下降沿写入来解决"距离 3"的依赖。
+// 所以 WB 段写回的值当拍就能被 ID 段读到（"距离 3"的依赖），所有寄存器都只在上升沿更新。
 module regfile (
     input  wire        clk,
     input  wire [4:0]  ra1,
@@ -16,7 +16,7 @@ module regfile (
 
     reg [31:0] regs [0:31];
 
-    // 上电清零，与参考模型的初始状态一致（FPGA 上 initial 可综合）
+    // 上电清零（FPGA 上 initial 可综合为寄存器初值）
     integer i;
     initial begin
         for (i = 0; i < 32; i = i + 1)

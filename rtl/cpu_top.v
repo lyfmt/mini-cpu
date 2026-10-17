@@ -6,7 +6,7 @@
 module cpu_top #(
     parameter IMEM_INIT = "",
     parameter DMEM_INIT = "",
-    parameter HAS_QMUL  = 1    // 1：带模乘单元（rv32i_qmul）；0：去掉模乘单元，qmul 按非法指令处理
+    parameter HAS_QMUL  = 1    // 1：带模乘单元，支持 qmul；0：不带模乘单元，qmul 按非法指令处理
 ) (
     input  wire        clk,
     input  wire        rst,        // 同步复位，高有效
